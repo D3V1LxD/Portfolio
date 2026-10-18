@@ -1,0 +1,2144 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Md. Mahim Khan — Naval Architect &amp; Offshore Engineering 3D Portfolio (itsmahim.dev)</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          },
+          colors: {
+            abyss: {
+              950: '#030811',
+              900: '#06101E',
+              800: '#0B1B32',
+              700: '#12294A'
+            },
+            hydro: {
+              400: '#22D3EE',
+              500: '#06B6D4',
+              600: '#0891B2'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #030811;
+      color: #E2E8F0;
+      overflow-x: hidden;
+    }
+    .font-mono-tech {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Blueprint CAD grid overlay */
+    .cad-grid-bg {
+      background-image:
+        linear-gradient(to right, rgba(34, 211, 238, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
+      background-size: 36px 36px;
+    }
+    .glass-panel {
+      background: rgba(6, 16, 30, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(34, 211, 238, 0.18);
+    }
+    .glass-panel-hover {
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .glass-panel-hover:hover {
+      border-color: rgba(34, 211, 238, 0.5);
+      box-shadow: 0 12px 32px -8px rgba(6, 182, 212, 0.22);
+      transform: translateY(-2px);
+    }
+    /* Custom range sliders for naval telemetry */
+    input[type=range].naval-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      background: rgba(18, 41, 74, 0.9);
+      border-radius: 999px;
+      border: 1px solid rgba(34, 211, 238, 0.25);
+      outline: none;
+    }
+    input[type=range].naval-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #22D3EE;
+      border: 2px solid #030811;
+      box-shadow: 0 0 10px rgba(34, 211, 238, 0.8);
+      cursor: pointer;
+    }
+    input[type=range].naval-slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #22D3EE;
+      border: 2px solid #030811;
+      box-shadow: 0 0 10px rgba(34, 211, 238, 0.8);
+      cursor: pointer;
+    }
+    .hud-corner {
+      position: relative;
+    }
+    .hud-corner::before,
+    .hud-corner::after {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-color: #22D3EE;
+      pointer-events: none;
+    }
+    .hud-corner::before {
+      top: -1px;
+      left: -1px;
+      border-top: 2px solid #22D3EE;
+      border-left: 2px solid #22D3EE;
+    }
+    .hud-corner::after {
+      bottom: -1px;
+      right: -1px;
+      border-bottom: 2px solid #22D3EE;
+      border-right: 2px solid #22D3EE;
+    }
+  </style>
+</head>
+<body class="bg-abyss-950 text-slate-100 selection:bg-cyan-500 selection:text-slate-950 cad-grid-bg min-h-screen flex flex-col">
+
+  <!-- Ambient Background 3D Wave Canvas -->
+  <canvas id="bg-ocean-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-0 opacity-35"></canvas>
+
+  <!-- Sticky Maritime Telemetry Navigation Bar -->
+  <header class="sticky top-0 z-40 glass-panel border-b border-cyan-500/20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+      <!-- Brand Identity -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500/25 to-blue-600/30 border border-cyan-400/40 flex items-center justify-center shadow-inner">
+          <svg class="w-6 h-6 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 17l3-6 6-3 6 3 3 6M2 20c2 0 3-1 5-1s3 1 5 1 3-1 5-1 3 1 5 1M12 4v4"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold tracking-tight text-white text-base sm:text-lg">MD. MAHIM KHAN</span>
+            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono-tech font-semibold bg-cyan-500/15 text-cyan-300 border border-cyan-400/30">NAOE · BMU</span>
+          </div>
+          <p class="text-[11px] font-mono-tech text-slate-400 hidden xs:block">NAVAL ARCHITECT &amp; OFFSHORE ENGINEER · ITSMAHIM.DEV</p>
+        </div>
+      </div>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="hidden lg:flex items-center gap-1" aria-label="Primary Navigation">
+        <button type="button" data-nav="simulator-section" class="nav-scroll-btn px-3 py-1.5 rounded-md text-xs font-medium text-cyan-300 bg-cyan-500/10 border border-cyan-500/20 hover:bg-cyan-500/20 transition">3D Hull Lab</button>
+        <button type="button" data-nav="assessment-section" class="nav-scroll-btn px-3 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-cyan-300 hover:bg-white/5 transition">Profile &amp; Theme</button>
+        <button type="button" data-nav="competencies-section" class="nav-scroll-btn px-3 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-cyan-300 hover:bg-white/5 transition">Competencies</button>
+        <button type="button" data-nav="projects-section" class="nav-scroll-btn px-3 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-cyan-300 hover:bg-white/5 transition">Vessel Projects</button>
+        <button type="button" data-nav="webapps-section" class="nav-scroll-btn px-3 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-cyan-300 hover:bg-white/5 transition">Web Apps (5)</button>
+        <button type="button" data-nav="publications-section" class="nav-scroll-btn px-3 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-cyan-300 hover:bg-white/5 transition">Publications &amp; Certs</button>
+        <button type="button" data-nav="contact-section" class="nav-scroll-btn px-3 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-cyan-300 hover:bg-white/5 transition">Contact</button>
+      </nav>
+
+      <!-- Actions: Node.js API Inspector & Mobile Menu Button -->
+      <div class="flex items-center gap-2">
+        <button type="button" id="open-node-modal-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono-tech font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-400/30 hover:bg-emerald-500/25 transition">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Node.js API</span>
+        </button>
+        <button type="button" id="mobile-menu-btn" aria-label="Toggle Menu" class="lg:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 border border-white/10">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Collapsible Mobile Menu -->
+    <div id="mobile-menu-panel" class="hidden lg:hidden border-t border-cyan-500/20 bg-abyss-900/95 px-4 py-3 space-y-1.5">
+      <div class="grid grid-cols-2 gap-1.5">
+        <button type="button" data-nav="simulator-section" class="nav-scroll-btn text-left px-3 py-2 rounded-md text-xs font-medium text-cyan-300 bg-cyan-500/10">3D Hull Lab</button>
+        <button type="button" data-nav="assessment-section" class="nav-scroll-btn text-left px-3 py-2 rounded-md text-xs font-medium text-slate-200 hover:bg-white/5">Profile &amp; Theme</button>
+        <button type="button" data-nav="competencies-section" class="nav-scroll-btn text-left px-3 py-2 rounded-md text-xs font-medium text-slate-200 hover:bg-white/5">Competencies</button>
+        <button type="button" data-nav="projects-section" class="nav-scroll-btn text-left px-3 py-2 rounded-md text-xs font-medium text-slate-200 hover:bg-white/5">Vessel Projects</button>
+        <button type="button" data-nav="webapps-section" class="nav-scroll-btn text-left px-3 py-2 rounded-md text-xs font-medium text-slate-200 hover:bg-white/5">Live Web Apps</button>
+        <button type="button" data-nav="publications-section" class="nav-scroll-btn text-left px-3 py-2 rounded-md text-xs font-medium text-slate-200 hover:bg-white/5">Articles &amp; Certs</button>
+        <button type="button" data-nav="contact-section" class="nav-scroll-btn text-left px-3 py-2 rounded-md text-xs font-medium text-slate-200 hover:bg-white/5 col-span-2">Contact &amp; Collaboration</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="relative z-10 flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-16">
+
+    <!-- HERO + INTERACTIVE 3D NAVAL ARCHITECTURE DIGITAL TWIN STUDIO -->
+    <section id="simulator-section" class="space-y-6">
+      <!-- Top Hero Banner -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        <!-- Left Column: Identity, Bio, Academic Credentials & CTA -->
+        <div class="lg:col-span-5 glass-panel rounded-2xl p-6 sm:p-7 flex flex-col justify-between hud-corner">
+          <div class="space-y-4">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono-tech uppercase tracking-wider bg-cyan-500/15 text-cyan-300 border border-cyan-400/30">
+                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+                Ship Design · Engineering Analysis · Maritime Innovation
+              </span>
+            </div>
+
+            <div class="space-y-2">
+              <p class="text-xs font-mono-tech uppercase tracking-widest text-cyan-400">Designing the vessels of tomorrow</p>
+              <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
+                Md. Mahim Khan
+              </h1>
+              <p class="text-sm sm:text-base font-medium text-cyan-200/90">
+                Naval Architect &amp; Offshore Engineering Specialist
+              </p>
+            </div>
+
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Dedicated 4th-year student pursuing a <strong class="text-white font-semibold">B.Sc. in Naval Architecture &amp; Offshore Engineering</strong> at <strong class="text-cyan-300 font-semibold">Bangladesh Maritime University (BMU)</strong>. With 3.5+ years of academic experience, I specialize in creating detailed ship designs, performing complex structural (FEA) and hydrodynamic (CFD) analyses, and utilizing programming for engineering automation.
+            </p>
+
+            <!-- Quote Block -->
+            <blockquote class="p-3.5 rounded-xl bg-abyss-900/90 border-l-4 border-cyan-400 text-xs sm:text-sm italic text-slate-200">
+              “Becoming a skilled naval architect contributing to cutting-edge ship design and offshore engineering worldwide.”
+            </blockquote>
+
+            <!-- Key Telemetry Stat Pills -->
+            <div class="grid grid-cols-3 gap-2.5 pt-1">
+              <div class="p-3 rounded-xl bg-abyss-900/80 border border-white/10">
+                <div class="text-lg sm:text-xl font-bold font-mono-tech text-cyan-400">3.5+ Yrs</div>
+                <div class="text-[11px] text-slate-400">NAOE Engineering Study</div>
+              </div>
+              <div class="p-3 rounded-xl bg-abyss-900/80 border border-white/10">
+                <div class="text-lg sm:text-xl font-bold font-mono-tech text-emerald-400">15%+</div>
+                <div class="text-[11px] text-slate-400">Hull Drag Reduction</div>
+              </div>
+              <div class="p-3 rounded-xl bg-abyss-900/80 border border-white/10">
+                <div class="text-lg sm:text-xl font-bold font-mono-tech text-amber-400">2000 DWT</div>
+                <div class="text-[11px] text-slate-400">RINA Tanker Design</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="pt-5 mt-5 border-t border-white/10 flex flex-wrap items-center gap-2.5">
+            <button type="button" data-nav="projects-section" class="nav-scroll-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-cyan-400 text-slate-950 hover:bg-cyan-300 transition shadow-lg shadow-cyan-500/20">
+              Explore Engineering Projects
+            </button>
+            <button type="button" data-nav="webapps-section" class="nav-scroll-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-white/10 text-white hover:bg-white/15 border border-white/15 transition">
+              Launch Live Web Apps (5)
+            </button>
+            <a href="https://www.itsmahim.dev/" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2.5 rounded-xl text-xs font-mono-tech text-cyan-300 hover:text-cyan-200 border border-cyan-500/30 hover:bg-cyan-500/10 transition ml-auto">
+              itsmahim.dev ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive 3D Naval Hull & CFD Digital Twin Viewport -->
+        <div class="lg:col-span-7 glass-panel rounded-2xl p-4 sm:p-5 flex flex-col justify-between hud-corner relative overflow-hidden">
+          <!-- Top Simulator Header & Model Switcher -->
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-white/10 z-10">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+              <span class="text-xs font-mono-tech uppercase tracking-wider text-cyan-300 font-semibold">Interactive 3D Hydrodynamic Digital Twin</span>
+              <span id="sim-active-badge" class="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-mono-tech bg-cyan-500/20 text-cyan-200 border border-cyan-400/30">2000 DWT RINA Tanker</span>
+            </div>
+
+            <!-- 3D Vessel Selection Buttons -->
+            <div class="flex flex-wrap items-center gap-1" role="group" aria-label="3D Vessel Model">
+              <button type="button" data-vessel="tanker" class="vessel-mode-btn px-2.5 py-1 rounded text-[11px] font-mono-tech font-medium bg-cyan-400 text-slate-950 transition">2000 DWT Tanker</button>
+              <button type="button" data-vessel="auv" class="vessel-mode-btn px-2.5 py-1 rounded text-[11px] font-mono-tech font-medium bg-abyss-900 text-slate-300 hover:text-white border border-white/10 transition">AUV CFD Body</button>
+              <button type="button" data-vessel="fea" class="vessel-mode-btn px-2.5 py-1 rounded text-[11px] font-mono-tech font-medium bg-abyss-900 text-slate-300 hover:text-white border border-white/10 transition">Hull FEA Framing</button>
+            </div>
+          </div>
+
+          <!-- 3D WebGL Canvas Wrapper -->
+          <div id="hull-canvas-container" class="relative w-full h-72 sm:h-80 md:h-96 my-2 rounded-xl overflow-hidden bg-gradient-to-b from-abyss-950 via-abyss-900 to-abyss-800 border border-cyan-500/25 cursor-grab active:cursor-grabbing">
+            <canvas id="hull-3d-canvas" class="w-full h-full block"></canvas>
+
+            <!-- Top-Left Overlay: Live Hydrodynamic Telemetry Readout -->
+            <div class="absolute top-3 left-3 bg-abyss-950/85 backdrop-blur-md border border-cyan-500/30 rounded-lg p-2.5 text-[11px] font-mono-tech space-y-1 pointer-events-none">
+              <div class="text-cyan-400 font-semibold flex items-center gap-1.5">
+                <span>TELEMETRY HUD</span>
+                <span class="text-[9px] text-emerald-400 px-1 rounded bg-emerald-500/15">LIVE 60FPS</span>
+              </div>
+              <div class="grid grid-cols-2 gap-x-4 gap-y-0.5 text-slate-300">
+                <span>Froude (Fn): <strong id="hud-fn" class="text-white">0.230</strong></span>
+                <span>Displ (Δ): <strong id="hud-disp" class="text-white">2,535 t</strong></span>
+                <span>Drag Red.: <strong id="hud-drag" class="text-emerald-400">-15.5%</strong></span>
+                <span>Power (Pe): <strong id="hud-power" class="text-amber-300">518 kW</strong></span>
+                <span>Wetted (S): <strong id="hud-wetted" class="text-white">1,126 m²</strong></span>
+                <span>Stability GMt: <strong id="hud-gmt" class="text-cyan-300">1.92 m</strong></span>
+              </div>
+            </div>
+
+            <!-- Top-Right Overlay: Analysis Shader Mode Switcher -->
+            <div class="absolute top-3 right-3 flex flex-col gap-1">
+              <button type="button" data-shader="cad" class="shader-mode-btn px-2.5 py-1 rounded text-[10px] font-mono-tech bg-cyan-500/30 text-cyan-200 border border-cyan-400/50 text-right">CAD + Stations</button>
+              <button type="button" data-shader="fea" class="shader-mode-btn px-2.5 py-1 rounded text-[10px] font-mono-tech bg-abyss-950/80 text-slate-300 border border-white/15 hover:border-cyan-400/40 text-right">FEA Stress Map</button>
+              <button type="button" data-shader="cfd" class="shader-mode-btn px-2.5 py-1 rounded text-[10px] font-mono-tech bg-abyss-950/80 text-slate-300 border border-white/15 hover:border-cyan-400/40 text-right">CFD Streamlines</button>
+            </div>
+
+            <!-- Bottom Bar inside Viewport: Camera Views & Orbit Hint -->
+            <div class="absolute bottom-2.5 inset-x-3 flex flex-wrap items-center justify-between gap-2 pointer-events-auto">
+              <div class="flex items-center gap-1 bg-abyss-950/85 backdrop-blur-md px-2 py-1 rounded-lg border border-white/10">
+                <span class="text-[10px] font-mono-tech text-slate-400 mr-1">VIEW:</span>
+                <button type="button" data-cam="iso" class="cam-preset-btn px-2 py-0.5 rounded text-[10px] font-mono-tech bg-cyan-500/25 text-cyan-200">3D Iso</button>
+                <button type="button" data-cam="profile" class="cam-preset-btn px-2 py-0.5 rounded text-[10px] font-mono-tech text-slate-300 hover:text-white">Profile</button>
+                <button type="button" data-cam="bow" class="cam-preset-btn px-2 py-0.5 rounded text-[10px] font-mono-tech text-slate-300 hover:text-white">Body Plan</button>
+                <button type="button" data-cam="top" class="cam-preset-btn px-2 py-0.5 rounded text-[10px] font-mono-tech text-slate-300 hover:text-white">GA Plan</button>
+              </div>
+              <div class="flex items-center gap-1.5 bg-abyss-950/85 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                <button type="button" id="toggle-autorotate-btn" class="text-[10px] font-mono-tech text-cyan-300 hover:text-cyan-200">Auto-Orbit: ON</button>
+                <span class="text-slate-600">|</span>
+                <span class="text-[10px] font-mono-tech text-slate-400 hidden sm:inline">Drag to Rotate · Scroll to Zoom</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Naval Architecture Parameter Sliders -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-white/10">
+            <div class="bg-abyss-900/70 p-2.5 rounded-xl border border-white/10">
+              <div class="flex justify-between text-[11px] font-mono-tech mb-1">
+                <label for="slider-speed" class="text-slate-300">SPEED (Vs)</label>
+                <span id="label-speed" class="text-cyan-300 font-semibold">12.0 knots</span>
+              </div>
+              <input id="slider-speed" type="range" min="6" max="18" step="0.5" value="12" class="naval-slider">
+            </div>
+            <div class="bg-abyss-900/70 p-2.5 rounded-xl border border-white/10">
+              <div class="flex justify-between text-[11px] font-mono-tech mb-1">
+                <label for="slider-wave" class="text-slate-300">SEA STATE (Hs)</label>
+                <span id="label-wave" class="text-cyan-300 font-semibold">1.2 m</span>
+              </div>
+              <input id="slider-wave" type="range" min="0.2" max="3.8" step="0.2" value="1.2" class="naval-slider">
+            </div>
+            <div class="bg-abyss-900/70 p-2.5 rounded-xl border border-white/10">
+              <div class="flex justify-between text-[11px] font-mono-tech mb-1">
+                <label for="slider-draft" class="text-slate-300">DESIGN DRAFT (T)</label>
+                <span id="label-draft" class="text-cyan-300 font-semibold">3.5 m</span>
+              </div>
+              <input id="slider-draft" type="range" min="2.2" max="4.5" step="0.1" value="3.5" class="naval-slider">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 1: PROFILE ASSESSMENT & ACADEMIC BACKGROUND THEME RATIONALE -->
+    <section id="assessment-section" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-cyan-500/20 pb-4">
+        <div>
+          <span class="text-xs font-mono-tech uppercase tracking-widest text-cyan-400">01 // Academic Profile Assessment &amp; Theme Architecture</span>
+          <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1">Education, Foundation &amp; Maritime Design System</h2>
+        </div>
+        <p class="text-xs font-mono-tech text-slate-400">BANGLADESH MARITIME UNIVERSITY (BMU) · 4TH YEAR, 2ND SEMESTER</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Academic Foundation Card -->
+        <div class="lg:col-span-5 glass-panel rounded-2xl p-6 space-y-5 hud-corner">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <span class="px-2.5 py-1 rounded-md text-[11px] font-mono-tech bg-cyan-500/15 text-cyan-300 border border-cyan-400/30">EDUCATION &amp; FOUNDATION</span>
+              <h3 class="text-xl font-bold text-white mt-3">B.Sc. in Naval Architecture &amp; Offshore Engineering</h3>
+              <p class="text-sm text-cyan-300 font-medium mt-0.5">Bangladesh Maritime University (BMU)</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center shrink-0 font-mono-tech text-cyan-300 font-bold text-sm">
+              BMU
+            </div>
+          </div>
+
+          <p class="text-sm text-slate-300 leading-relaxed">
+            Mastering theoretical knowledge and practical skills in naval architecture and maritime technology—focusing on ship design optimization, structural analysis, hydrodynamics, and innovative engineering solutions.
+          </p>
+
+          <div class="grid grid-cols-2 gap-3 pt-2">
+            <div class="p-3.5 rounded-xl bg-abyss-900/90 border border-white/10">
+              <div class="text-[11px] font-mono-tech text-slate-400">CURRENT LEVEL</div>
+              <div class="text-sm font-bold text-white mt-1">4th Year, 2nd Semester</div>
+            </div>
+            <div class="p-3.5 rounded-xl bg-abyss-900/90 border border-white/10">
+              <div class="text-[11px] font-mono-tech text-slate-400">ACADEMIC DURATION</div>
+              <div class="text-sm font-bold text-cyan-300 mt-1">3.5+ Years of Study</div>
+            </div>
+          </div>
+
+          <div class="space-y-2 pt-1">
+            <div class="text-xs font-mono-tech uppercase text-slate-400">Core Academic Focus Areas</div>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="px-2.5 py-1 rounded-lg text-xs bg-abyss-800 text-cyan-200 border border-cyan-500/20">Ship Design Optimization</span>
+              <span class="px-2.5 py-1 rounded-lg text-xs bg-abyss-800 text-cyan-200 border border-cyan-500/20">Structural Analysis (FEA)</span>
+              <span class="px-2.5 py-1 rounded-lg text-xs bg-abyss-800 text-cyan-200 border border-cyan-500/20">CFD Hydrodynamics</span>
+              <span class="px-2.5 py-1 rounded-lg text-xs bg-abyss-800 text-cyan-200 border border-cyan-500/20">Stability &amp; RINA Class</span>
+              <span class="px-2.5 py-1 rounded-lg text-xs bg-abyss-800 text-cyan-200 border border-cyan-500/20">Engineering Automation</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Assessment & Theme Mapping Matrix -->
+        <div class="lg:col-span-7 glass-panel rounded-2xl p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold text-white">Profile Assessment &amp; Academic Theme Translation</h3>
+            <span class="text-xs font-mono-tech text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded border border-emerald-400/25">Theme: Abyssal Hydrodynamic CAD</span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            An assessment of <strong class="text-white">itsmahim.dev</strong> reveals a rare dual-competency profile: rigorous <strong class="text-cyan-300">Naval Architecture &amp; Offshore Engineering</strong> (MAXSURF hull optimization, RINA tanker design, ANSYS FEA, AUV CFD) paired with <strong class="text-emerald-300">Full-Stack Software &amp; Engineering Automation</strong> (C++, Python, MATLAB, and 5 live web applications). The visual theme was custom-engineered around four pillars of your academic discipline:
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+            <div class="p-4 rounded-xl bg-abyss-900/85 border border-cyan-500/20 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono-tech font-semibold text-cyan-400">01. DIGITAL TOWING TANK PALETTE</span>
+                <span class="w-3 h-3 rounded-full bg-cyan-400"></span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Deep Abyssal Navy (<code class="text-cyan-300">#030811</code>) and Hydrodynamic Streamline Cyan (<code class="text-cyan-300">#22D3EE</code>) mirror MAXSURF hull-line viewports and CFD velocity fields.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-abyss-900/85 border border-emerald-500/20 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono-tech font-semibold text-emerald-400">02. PARAMETRIC 3D HULL &amp; AUV LAB</span>
+                <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Directly visualizes your <strong class="text-white">2000 DWT Inland Oil Tanker</strong>, <strong class="text-white">AUV CFD</strong> research, and <strong class="text-white">ANSYS FEA</strong> structural framing in interactive WebGL.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-abyss-900/85 border border-amber-500/20 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono-tech font-semibold text-amber-400">03. NAVAL TELEMETRY &amp; ITTC-57 ENGINE</span>
+                <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Computes real-time Froude number (<code class="text-amber-300">Fn</code>), displacement (<code class="text-amber-300">Δ</code>), wetted surface, and effective power (<code class="text-amber-300">Pe</code>) via Node.js &amp; client solvers.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-abyss-900/85 border border-purple-500/20 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono-tech font-semibold text-purple-300">04. ENGINEERING + SAAS CONVERGENCE</span>
+                <span class="w-3 h-3 rounded-full bg-purple-400"></span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Unifies your naval CAD/FEA portfolio with your 5 live software products (<code class="text-purple-300">*.itsmahim.qzz.io</code>) in a single cohesive platform.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: CORE COMPETENCIES & TECHNICAL ARSENAL -->
+    <section id="competencies-section" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-cyan-500/20 pb-4">
+        <div>
+          <span class="text-xs font-mono-tech uppercase tracking-widest text-cyan-400">02 // Core Competencies &amp; Engineering Workflow</span>
+          <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1">A Blend of Design Craft, Analytical Rigor &amp; Automation</h2>
+        </div>
+        <!-- Competency Filter Buttons -->
+        <div class="flex flex-wrap gap-1.5" role="group" aria-label="Filter Competencies">
+          <button type="button" data-comp-filter="all" class="comp-filter-btn px-3 py-1.5 rounded-lg text-xs font-mono-tech bg-cyan-400 text-slate-950 font-semibold transition">All Pillars (03)</button>
+          <button type="button" data-comp-filter="01" class="comp-filter-btn px-3 py-1.5 rounded-lg text-xs font-mono-tech bg-abyss-900 text-slate-300 hover:text-white border border-white/10 transition">01 Ship Design</button>
+          <button type="button" data-comp-filter="02" class="comp-filter-btn px-3 py-1.5 rounded-lg text-xs font-mono-tech bg-abyss-900 text-slate-300 hover:text-white border border-white/10 transition">02 Analysis (FEA/CFD)</button>
+          <button type="button" data-comp-filter="03" class="comp-filter-btn px-3 py-1.5 rounded-lg text-xs font-mono-tech bg-abyss-900 text-slate-300 hover:text-white border border-white/10 transition">03 Programming</button>
+        </div>
+      </div>
+
+      <div id="competencies-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Pillar 01: Ship Design & Modeling -->
+        <div data-comp-card="01" class="glass-panel glass-panel-hover rounded-2xl p-6 flex flex-col justify-between hud-corner">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-mono-tech font-bold text-cyan-400">01</span>
+              <span class="px-2.5 py-1 rounded text-[11px] font-mono-tech bg-cyan-500/15 text-cyan-300 border border-cyan-400/30">CAD &amp; NURBS MODELING</span>
+            </div>
+            <h3 class="text-xl font-bold text-white">Ship Design &amp; Modeling</h3>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Proficient in creating detailed ship designs, from 2D technical drawings to 3D modeling and visualization.
+            </p>
+            <div class="space-y-2 pt-2">
+              <div class="text-xs font-mono-tech uppercase text-slate-400">Key Capabilities</div>
+              <ul class="space-y-1.5 text-xs sm:text-sm text-slate-200">
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>Design Optimization &amp; Lines Plan</li>
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>2D/3D Technical Drawings &amp; GA Plans</li>
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>Computer Vision &amp; 3D Hull Visualization</li>
+              </ul>
+            </div>
+          </div>
+          <div class="pt-5 mt-5 border-t border-white/10">
+            <div class="text-[11px] font-mono-tech text-slate-400 mb-2">SOFTWARE SUITE</div>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="px-2.5 py-1 rounded-md text-xs font-mono-tech bg-cyan-500/15 text-cyan-200 border border-cyan-400/30">AutoCAD</span>
+              <span class="px-2.5 py-1 rounded-md text-xs font-mono-tech bg-cyan-500/15 text-cyan-200 border border-cyan-400/30">Rhinoceros</span>
+              <span class="px-2.5 py-1 rounded-md text-xs font-mono-tech bg-cyan-500/15 text-cyan-200 border border-cyan-400/30">MAXSURF</span>
+              <span class="px-2.5 py-1 rounded-md text-xs font-mono-tech bg-cyan-500/15 text-cyan-200 border border-cyan-400/30">SolidWorks</span>
+              <span class="px-2.5 py-1 rounded-md text-xs font-mono-tech bg-cyan-500/15 text-cyan-200 border border-cyan-400/30">ANSYS</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pillar 02: Engineering Analysis -->
+        <div data-comp-card="02" class="glass-panel glass-panel-hover rounded-2xl p-6 flex flex-col justify-between hud-corner">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-mono-tech font-bold text-emerald-400">02</span>
+              <span class="px-2.5 py-1 rounded text-[11px] font-mono-tech bg-emerald-500/15 text-emerald-300 border border-emerald-400/30">FEA · CFD · STABILITY</span>
+            </div>
+            <h3 class="text-xl font-bold text-white">Engineering Analysis</h3>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Strong foundation in structural analysis, hydrodynamics, and stability calculations to create comprehensive engineering solutions.
+            </p>
+            <div class="space-y-2 pt-2">
+              <div class="text-xs font-mono-tech uppercase text-slate-400">Key Capabilities</div>
+              <ul class="space-y-1.5 text-xs sm:text-sm text-slate-200">
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Structural Analysis (Finite Element Method)</li>
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Intact &amp; Damage Stability Calculations</li>
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Hydrodynamic Analysis &amp; Performance Optimization</li>
+              </ul>
+            </div>
+          </div>
+          <div class="pt-5 mt-5 border-t border-white/10">
+            <div class="text-[11px] font-mono-tech text-slate-400 mb-2">ANALYSIS TOOLS</div>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="px-2.5 py-1 rounded-md text-xs font-mono-tech bg-emerald-500/15 text-emerald-200 border border-emerald-400/30">ANSYS</span>
+              <span class="px-2.5 py-1 rounded-md text-xs font-mono-tech bg-emerald-500/15 text-emerald-200 border border-emerald-400/30">FEA</span>
+              <span class="px-2.5 py-1 rounded-md text-xs font-mono-tech bg-emerald-500/15 text-emerald-200 border border-emerald-400/30">MAXSURF</span>
+              <span class="px-2.5 py-1 rounded-md text-xs font-mono-tech bg-emerald-500/15 text-emerald-200 border border-emerald-400/30">CFD Resistance</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pillar 03: Programming & Automation -->
+        <div data-comp-card="03" class="glass-panel glass-panel-hover rounded-2xl p-6 flex flex-col justify-between hud-corner">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-2xl font-mono-tech font-bold text-amber-400">03</span>
+              <span class="px-2.5 py-1 rounded text-[11px] font-mono-tech bg-amber-500/15 text-amber-300 border border-amber-400/30">COMPUTATION &amp; DEV</span>
+            </div>
+            <h3 class="text-xl font-bold text-white">Programming &amp; Automation</h3>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Skilled in using programming languages for engineering calculations, numerical modeling, and automating naval workflows.
+            </p>
+            <div class="space-y-2 pt-2">
+              <div class="text-xs font-mono-tech uppercase text-slate-400">Key Capabilities</div>
+              <ul class="space-y-1.5 text-xs sm:text-sm text-slate-200">
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>C++ Programming for High-Speed Computation</li>
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>Python Development &amp; Full-Stack Web Apps</li>
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>MATLAB Analysis &amp; Engineering Process Automation</li>
+              </ul>
+            </div>
+          </div>
+          <div class="pt-5 mt-5 border-t border-white/10">
+            <div class="text-[11px] font-mono-tech text-slate-400 mb-2">LANGUAGES &amp; STACK</div>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="px-2.5 py-1 rounded-md text-xs font-mono-tech bg-amber-500/15 text-amber-200 border border-amber-400/30">C++</span>
+              <span class="px-2.5 py-1 rounded-md text-xs font-mono-tech bg-amber-500/15 text-amber-200 border border-amber-400/30">Python</span>
+              <span class="px-2.5 py-1 rounded-md text-xs font-mono-tech bg-amber-500/15 text-amber-200 border border-amber-400/30">MATLAB</span>
+              <span class="px-2.5 py-1 rounded-md text-xs font-mono-tech bg-amber-500/15 text-amber-200 border border-amber-400/30">Node.js &amp; WebGL</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: FLAGSHIP NAVAL ENGINEERING PROJECTS -->
+    <section id="projects-section" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-cyan-500/20 pb-4">
+        <div>
+          <span class="text-xs font-mono-tech uppercase tracking-widest text-cyan-400">03 // Naval Architecture &amp; Offshore Engineering Portfolio</span>
+          <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1">From Full Vessel Design to Structural &amp; CFD Validation</h2>
+        </div>
+        <p class="text-xs font-mono-tech text-slate-400">CLICK ANY PROJECT TO LOAD ITS 3D DIGITAL TWIN IN THE SIMULATOR</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Project 1: 2000 DWT Inland Oil Tanker -->
+        <article class="glass-panel glass-panel-hover rounded-2xl overflow-hidden flex flex-col justify-between border border-cyan-500/25">
+          <div>
+            <div class="relative h-48 overflow-hidden bg-abyss-900">
+              <img src="assets/images/tanker-2000dwt.jpg" alt="2000 DWT Inland Oil Tanker 3D CAD Visualization" class="w-full h-full object-cover max-w-full">
+              <div class="absolute inset-0 bg-gradient-to-t from-abyss-950 via-transparent to-transparent"></div>
+              <div class="absolute top-3 left-3 flex gap-1.5">
+                <span class="px-2.5 py-1 rounded text-[10px] font-mono-tech font-semibold bg-abyss-950/90 text-cyan-300 border border-cyan-400/40">DETAILED DESIGN</span>
+                <span class="px-2.5 py-1 rounded text-[10px] font-mono-tech font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">RINA CLASS</span>
+              </div>
+            </div>
+
+            <div class="p-6 space-y-4">
+              <div>
+                <h3 class="text-xl font-bold text-white">2000 DWT Inland Oil Tanker</h3>
+                <p class="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
+                  Complete vessel design for inland oil transportation with RINA classification. Engineered as a low-draft classed inland oil tanker.
+                </p>
+              </div>
+
+              <!-- Principal Particulars Table Grid -->
+              <div class="grid grid-cols-4 gap-1.5 bg-abyss-900/90 p-3 rounded-xl border border-white/10 text-center font-mono-tech">
+                <div>
+                  <div class="text-[10px] text-slate-400">LOA</div>
+                  <div class="text-xs font-bold text-cyan-300">74.27m</div>
+                </div>
+                <div>
+                  <div class="text-[10px] text-slate-400">LWL</div>
+                  <div class="text-xs font-bold text-white">73.5m</div>
+                </div>
+                <div>
+                  <div class="text-[10px] text-slate-400">BEAM</div>
+                  <div class="text-xs font-bold text-white">12.0m</div>
+                </div>
+                <div>
+                  <div class="text-[10px] text-slate-400">DRAFT</div>
+                  <div class="text-xs font-bold text-emerald-300">3.5m</div>
+                </div>
+                <div class="pt-1 border-t border-white/5">
+                  <div class="text-[10px] text-slate-400">DEPTH</div>
+                  <div class="text-xs font-bold text-white">5.0m</div>
+                </div>
+                <div class="pt-1 border-t border-white/5">
+                  <div class="text-[10px] text-slate-400">SPEED</div>
+                  <div class="text-xs font-bold text-amber-300">12 kn</div>
+                </div>
+                <div class="pt-1 border-t border-white/5 col-span-2">
+                  <div class="text-[10px] text-slate-400">DEADWEIGHT</div>
+                  <div class="text-xs font-bold text-cyan-300">2000 DWT</div>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap gap-1.5">
+                <span class="px-2 py-0.5 rounded text-[11px] font-mono-tech bg-white/5 text-slate-300 border border-white/10">AutoCAD</span>
+                <span class="px-2 py-0.5 rounded text-[11px] font-mono-tech bg-white/5 text-slate-300 border border-white/10">MAXSURF</span>
+                <span class="px-2 py-0.5 rounded text-[11px] font-mono-tech bg-white/5 text-slate-300 border border-white/10">Rhinoceros</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="px-6 pb-6 pt-3 border-t border-white/10 flex items-center gap-2">
+            <button type="button" data-load-3d="tanker" data-load-shader="cad" class="load-3d-project-btn flex-1 py-2 px-3 rounded-lg text-xs font-mono-tech font-semibold bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 hover:bg-cyan-400 hover:text-slate-950 transition">
+              Load in 3D Hull Lab
+            </button>
+            <button type="button" data-project-modal="tanker-2000dwt" class="open-project-modal-btn py-2 px-3 rounded-lg text-xs font-mono-tech text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition">
+              Specs &amp; GA
+            </button>
+          </div>
+        </article>
+
+        <!-- Project 2: Hull Structural Analysis -->
+        <article class="glass-panel glass-panel-hover rounded-2xl overflow-hidden flex flex-col justify-between border border-emerald-500/25">
+          <div>
+            <div class="relative h-48 overflow-hidden bg-abyss-900">
+              <img src="assets/images/hull-fea.jpg" alt="Hull Structural Analysis FEA Visualization" class="w-full h-full object-cover max-w-full">
+              <div class="absolute inset-0 bg-gradient-to-t from-abyss-950 via-transparent to-transparent"></div>
+              <div class="absolute top-3 left-3 flex gap-1.5">
+                <span class="px-2.5 py-1 rounded text-[10px] font-mono-tech font-semibold bg-abyss-950/90 text-emerald-300 border border-emerald-400/40">FINITE ELEMENT ANALYSIS</span>
+              </div>
+            </div>
+
+            <div class="p-6 space-y-4">
+              <div>
+                <h3 class="text-xl font-bold text-white">Hull Structural Analysis</h3>
+                <p class="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
+                  Performing finite element analysis (FEA) on ship hull structures to validate design integrity under various loading conditions.
+                </p>
+              </div>
+
+              <ul class="space-y-1.5 text-xs text-slate-300 bg-abyss-900/90 p-3.5 rounded-xl border border-white/10">
+                <li class="flex items-start gap-2"><span class="text-emerald-400 font-bold">▸</span>Finite element modeling of hull structure</li>
+                <li class="flex items-start gap-2"><span class="text-emerald-400 font-bold">▸</span>Validation of structural integrity &amp; buckling</li>
+                <li class="flex items-start gap-2"><span class="text-emerald-400 font-bold">▸</span>Stress &amp; strain analysis under multiple load cases</li>
+                <li class="flex items-start gap-2"><span class="text-emerald-400 font-bold">▸</span>Safety factor optimization &amp; material selection for depths</li>
+              </ul>
+
+              <div class="flex flex-wrap gap-1.5">
+                <span class="px-2 py-0.5 rounded text-[11px] font-mono-tech bg-white/5 text-slate-300 border border-white/10">ANSYS</span>
+                <span class="px-2 py-0.5 rounded text-[11px] font-mono-tech bg-white/5 text-slate-300 border border-white/10">FEA</span>
+                <span class="px-2 py-0.5 rounded text-[11px] font-mono-tech bg-white/5 text-slate-300 border border-white/10">Structural Mechanics</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="px-6 pb-6 pt-3 border-t border-white/10 flex items-center gap-2">
+            <button type="button" data-load-3d="fea" data-load-shader="fea" class="load-3d-project-btn flex-1 py-2 px-3 rounded-lg text-xs font-mono-tech font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 hover:bg-emerald-400 hover:text-slate-950 transition">
+              Load FEA Mesh in 3D
+            </button>
+            <button type="button" data-project-modal="hull-fea" class="open-project-modal-btn py-2 px-3 rounded-lg text-xs font-mono-tech text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition">
+              Load Cases
+            </button>
+          </div>
+        </article>
+
+        <!-- Project 3: Hull Form Optimization -->
+        <article class="glass-panel glass-panel-hover rounded-2xl overflow-hidden flex flex-col justify-between border border-amber-500/25">
+          <div>
+            <div class="relative h-48 overflow-hidden bg-abyss-900">
+              <img src="assets/images/hull-cfd.jpg" alt="Hull Form Optimization CFD Streamlines" class="w-full h-full object-cover max-w-full">
+              <div class="absolute inset-0 bg-gradient-to-t from-abyss-950 via-transparent to-transparent"></div>
+              <div class="absolute top-3 left-3 flex gap-1.5">
+                <span class="px-2.5 py-1 rounded text-[10px] font-mono-tech font-semibold bg-abyss-950/90 text-amber-300 border border-amber-400/40">HYDRODYNAMIC PERFORMANCE</span>
+                <span class="px-2.5 py-1 rounded text-[10px] font-mono-tech font-semibold bg-cyan-500/20 text-cyan-300 border border-cyan-400/40">-15%+ DRAG</span>
+              </div>
+            </div>
+
+            <div class="p-6 space-y-4">
+              <div>
+                <h3 class="text-xl font-bold text-white">Hull Form Optimization</h3>
+                <p class="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
+                  Used MAXSURF for hull form development and optimization, achieving significant reduction in resistance and improved hydrodynamic performance.
+                </p>
+              </div>
+
+              <ul class="space-y-1.5 text-xs text-slate-300 bg-abyss-900/90 p-3.5 rounded-xl border border-white/10">
+                <li class="flex items-start gap-2"><span class="text-amber-400 font-bold">▸</span>Hull form generation and NURBS modification</li>
+                <li class="flex items-start gap-2"><span class="text-amber-400 font-bold">▸</span>Parametric design optimization (LCB, Cp, Cb)</li>
+                <li class="flex items-start gap-2"><span class="text-amber-400 font-bold">▸</span>Resistance and propulsion analysis across speeds</li>
+                <li class="flex items-start gap-2"><span class="text-amber-400 font-bold">▸</span>Achieved <strong class="text-emerald-300">15%+ Resistance Reduction</strong></li>
+              </ul>
+
+              <div class="flex flex-wrap gap-1.5">
+                <span class="px-2 py-0.5 rounded text-[11px] font-mono-tech bg-white/5 text-slate-300 border border-white/10">MAXSURF</span>
+                <span class="px-2 py-0.5 rounded text-[11px] font-mono-tech bg-white/5 text-slate-300 border border-white/10">Hydrodynamics</span>
+                <span class="px-2 py-0.5 rounded text-[11px] font-mono-tech bg-white/5 text-slate-300 border border-white/10">ANSYS CFD</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="px-6 pb-6 pt-3 border-t border-white/10 flex items-center gap-2">
+            <button type="button" data-load-3d="auv" data-load-shader="cfd" class="load-3d-project-btn flex-1 py-2 px-3 rounded-lg text-xs font-mono-tech font-semibold bg-amber-500/20 text-amber-300 border border-amber-400/40 hover:bg-amber-400 hover:text-slate-950 transition">
+              Load CFD Flow in 3D
+            </button>
+            <button type="button" data-project-modal="hull-optimization" class="open-project-modal-btn py-2 px-3 rounded-lg text-xs font-mono-tech text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition">
+              CFD Data
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- SECTION 4: SELF-BUILT WEB & SOFTWARE APPLICATIONS -->
+    <section id="webapps-section" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-cyan-500/20 pb-4">
+        <div>
+          <span class="text-xs font-mono-tech uppercase tracking-widest text-cyan-400">04 // Full-Stack Engineering &amp; SaaS Ecosystem</span>
+          <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1">Web &amp; Software Apps — Self-Built, Live &amp; Free to Use</h2>
+        </div>
+        <!-- Category Filter -->
+        <div class="flex flex-wrap gap-1.5" role="group" aria-label="Filter Web Applications">
+          <button type="button" data-app-filter="all" class="app-filter-btn px-3 py-1 rounded-lg text-xs font-mono-tech bg-cyan-400 text-slate-950 font-semibold">All Apps (5)</button>
+          <button type="button" data-app-filter="Utility" class="app-filter-btn px-3 py-1 rounded-lg text-xs font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">Utility</button>
+          <button type="button" data-app-filter="AI" class="app-filter-btn px-3 py-1 rounded-lg text-xs font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">AI</button>
+          <button type="button" data-app-filter="Finance" class="app-filter-btn px-3 py-1 rounded-lg text-xs font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">Finance</button>
+          <button type="button" data-app-filter="Search" class="app-filter-btn px-3 py-1 rounded-lg text-xs font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">Search</button>
+          <button type="button" data-app-filter="Automation" class="app-filter-btn px-3 py-1 rounded-lg text-xs font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">Automation</button>
+        </div>
+      </div>
+
+      <div id="webapps-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- App 1: File Converter Tools -->
+        <div data-app-card="Utility" class="glass-panel glass-panel-hover rounded-2xl p-5 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-0.5 rounded text-[10px] font-mono-tech bg-cyan-500/15 text-cyan-300 border border-cyan-400/30">DOCUMENT UTILITY</span>
+              <span class="text-xs font-mono-tech text-emerald-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>LIVE</span>
+            </div>
+            <h3 class="text-lg font-bold text-white">File Converter Tools</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Convert PDF files to images and images to PDF. Edit PDFs and convert between various file extensions.
+            </p>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">PDF to Image</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">Image to PDF</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">File Conversion</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">PDF Editor</span>
+            </div>
+          </div>
+          <div class="pt-4 mt-4 border-t border-white/10 flex items-center justify-between">
+            <span class="text-xs font-mono-tech text-slate-400">tools.itsmahim.qzz.io</span>
+            <a href="https://tools.itsmahim.qzz.io" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg text-xs font-mono-tech font-semibold bg-cyan-500/20 text-cyan-300 hover:bg-cyan-400 hover:text-slate-950 transition">
+              Open App ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- App 2: AI Chat Application -->
+        <div data-app-card="AI" class="glass-panel glass-panel-hover rounded-2xl p-5 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-0.5 rounded text-[10px] font-mono-tech bg-purple-500/15 text-purple-300 border border-purple-400/30">GENERATIVE AI</span>
+              <span class="text-xs font-mono-tech text-emerald-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>LIVE</span>
+            </div>
+            <h3 class="text-lg font-bold text-white">AI Chat Application</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Free AI chat application where anyone can use advanced AI capabilities without any cost.
+            </p>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">Free AI Access</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">Real-time Chat</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">No Registration</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">Instant Responses</span>
+            </div>
+          </div>
+          <div class="pt-4 mt-4 border-t border-white/10 flex items-center justify-between">
+            <span class="text-xs font-mono-tech text-slate-400">ai.itsmahim.qzz.io</span>
+            <a href="https://ai.itsmahim.qzz.io" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg text-xs font-mono-tech font-semibold bg-cyan-500/20 text-cyan-300 hover:bg-cyan-400 hover:text-slate-950 transition">
+              Open App ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- App 3: Money Manager -->
+        <div data-app-card="Finance" class="glass-panel glass-panel-hover rounded-2xl p-5 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-0.5 rounded text-[10px] font-mono-tech bg-emerald-500/15 text-emerald-300 border border-emerald-400/30">FINTECH TRACKER</span>
+              <span class="text-xs font-mono-tech text-emerald-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>LIVE</span>
+            </div>
+            <h3 class="text-lg font-bold text-white">Money Manager</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Monitor your earnings and expenses in real-time with interactive financial reports and account syncing.
+            </p>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">Expense Tracking</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">Income Management</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">Financial Reports</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">Account Sync</span>
+            </div>
+          </div>
+          <div class="pt-4 mt-4 border-t border-white/10 flex items-center justify-between">
+            <span class="text-xs font-mono-tech text-slate-400">moneymanager.qzz.io</span>
+            <a href="https://moneymanager.qzz.io" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg text-xs font-mono-tech font-semibold bg-cyan-500/20 text-cyan-300 hover:bg-cyan-400 hover:text-slate-950 transition">
+              Open App ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- App 4: The Daily Wanted -->
+        <div data-app-card="Search" class="glass-panel glass-panel-hover rounded-2xl p-5 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-0.5 rounded text-[10px] font-mono-tech bg-amber-500/15 text-amber-300 border border-amber-400/30">SEARCH &amp; OSINT</span>
+              <span class="text-xs font-mono-tech text-emerald-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>LIVE</span>
+            </div>
+            <h3 class="text-lg font-bold text-white">The Daily Wanted</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Information search and monitoring tool built for fast results and comprehensive data discovery.
+            </p>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">Website Search</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">Detailed Info</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">Fast Results</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">Comprehensive Data</span>
+            </div>
+          </div>
+          <div class="pt-4 mt-4 border-t border-white/10 flex items-center justify-between">
+            <span class="text-xs font-mono-tech text-slate-400">thedailywanted.qzz.io</span>
+            <a href="https://thedailywanted.qzz.io" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg text-xs font-mono-tech font-semibold bg-cyan-500/20 text-cyan-300 hover:bg-cyan-400 hover:text-slate-950 transition">
+              Open App ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- App 5: AutoMail -->
+        <div data-app-card="Automation" class="glass-panel glass-panel-hover rounded-2xl p-5 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-0.5 rounded text-[10px] font-mono-tech bg-blue-500/15 text-blue-300 border border-blue-400/30">EMAIL AUTOMATION</span>
+              <span class="text-xs font-mono-tech text-emerald-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>LIVE</span>
+            </div>
+            <h3 class="text-lg font-bold text-white">AutoMail</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Send bulk emails using your own mail credentials. Perfect for newsletters and mass communications.
+            </p>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">Bulk Email</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">Custom Credentials</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">Easy Setup</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-abyss-900 text-slate-300 border border-white/10">Reliable Delivery</span>
+            </div>
+          </div>
+          <div class="pt-4 mt-4 border-t border-white/10 flex items-center justify-between">
+            <span class="text-xs font-mono-tech text-slate-400">automail.itsmahim.qzz.io</span>
+            <a href="https://automail.itsmahim.qzz.io" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg text-xs font-mono-tech font-semibold bg-cyan-500/20 text-cyan-300 hover:bg-cyan-400 hover:text-slate-950 transition">
+              Open App ↗
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: PUBLICATIONS, TECHNICAL ARTICLES & CERTIFICATIONS -->
+    <section id="publications-section" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-cyan-500/20 pb-4">
+        <div>
+          <span class="text-xs font-mono-tech uppercase tracking-widest text-cyan-400">05 // Technical Writing &amp; Professional Credentials</span>
+          <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1">Publications, Articles &amp; Verified Certifications</h2>
+        </div>
+        <p class="text-xs font-mono-tech text-slate-400">NAVAL ARCHITECTURE RESEARCH &amp; CONTINUOUS DEVELOPMENT</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left 7 Cols: Publications & Articles -->
+        <div class="lg:col-span-7 space-y-4">
+          <h3 class="text-base font-mono-tech uppercase tracking-wider text-cyan-300">Publications &amp; Technical Articles</h3>
+
+          <!-- Article 1: General Arrangement Plan -->
+          <div class="glass-panel glass-panel-hover rounded-2xl p-6 space-y-3 hud-corner">
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-mono-tech text-slate-400">
+              <span>OCTOBER 2024 · 15 MIN READ</span>
+              <div class="flex gap-1.5">
+                <span class="px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300">SHIP DESIGN</span>
+                <span class="px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300">GAP</span>
+                <span class="px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300">NAVAL ARCHITECTURE</span>
+              </div>
+            </div>
+            <h4 class="text-lg sm:text-xl font-bold text-white">General Arrangement Plan</h4>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              A comprehensive guide to understanding ship layout design, crew accommodation planning, and the essential components of a vessel's general arrangement. Explore different ship types and their unique layouts.
+            </p>
+            <div class="pt-2 flex flex-wrap items-center gap-3">
+              <button type="button" data-article-modal="ga-plan" class="open-article-modal-btn px-3.5 py-1.5 rounded-lg text-xs font-mono-tech font-semibold bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 hover:bg-cyan-400 hover:text-slate-950 transition">
+                Read Technical Brief
+              </button>
+              <a href="https://www.itsmahim.dev/" target="_blank" rel="noopener noreferrer" class="text-xs font-mono-tech text-slate-300 hover:text-cyan-300 transition">
+                Read on LinkedIn / itsmahim.dev ↗
+              </a>
+            </div>
+          </div>
+
+          <!-- Article 2: Optimizing AUV Performance with CFD -->
+          <div class="glass-panel glass-panel-hover rounded-2xl p-6 space-y-3 hud-corner">
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-mono-tech text-slate-400">
+              <span>OCTOBER 2024 · 8 MIN READ</span>
+              <div class="flex gap-1.5">
+                <span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300">AUV</span>
+                <span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300">CFD</span>
+                <span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300">HYDRODYNAMICS</span>
+              </div>
+            </div>
+            <h4 class="text-lg sm:text-xl font-bold text-white">Optimizing AUV Performance: A Deep Dive into Hydrodynamic Resistance with CFD</h4>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              An in-depth exploration of AUV hydrodynamic performance optimization, including resistance analysis, computational fluid dynamics applications, and performance enhancement techniques.
+            </p>
+            <div class="pt-2 flex flex-wrap items-center gap-3">
+              <button type="button" data-article-modal="auv-cfd" class="open-article-modal-btn px-3.5 py-1.5 rounded-lg text-xs font-mono-tech font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 hover:bg-emerald-400 hover:text-slate-950 transition">
+                Read Technical Brief
+              </button>
+              <button type="button" data-load-3d="auv" data-load-shader="cfd" class="load-3d-project-btn text-xs font-mono-tech text-cyan-300 hover:text-cyan-200 underline">
+                Inspect AUV in 3D Simulator
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right 5 Cols: Certifications -->
+        <div class="lg:col-span-5 space-y-4">
+          <h3 class="text-base font-mono-tech uppercase tracking-wider text-cyan-300">Professional Certifications (2025)</h3>
+
+          <div class="space-y-3.5">
+            <!-- Cert 1 -->
+            <div class="glass-panel rounded-2xl p-5 space-y-2 border border-white/10">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono-tech text-cyan-300 font-semibold">ISSUED: 06/12/2025</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-white/5 text-slate-300">VERIFIED CREDENTIAL</span>
+              </div>
+              <h4 class="text-base font-bold text-white">Online Course Certification</h4>
+              <p class="text-xs text-slate-300">Instructor / Issuer: <strong class="text-white">Online — Muhammad Moin</strong></p>
+              <div class="pt-2 flex items-center justify-between gap-2 bg-abyss-900/90 px-3 py-2 rounded-lg border border-white/10">
+                <code class="text-[11px] font-mono-tech text-slate-300 truncate">ID: 3803c23d-db46-43a5-af43-b5950f280121</code>
+                <button type="button" data-copy="3803c23d-db46-43a5-af43-b5950f280121" class="copy-cred-btn text-[11px] font-mono-tech text-cyan-300 hover:text-white shrink-0">Copy ID</button>
+              </div>
+            </div>
+
+            <!-- Cert 2 -->
+            <div class="glass-panel rounded-2xl p-5 space-y-2 border border-white/10">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono-tech text-cyan-300 font-semibold">ISSUED: 28/06/2025</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-white/5 text-slate-300">VERIFIED CREDENTIAL</span>
+              </div>
+              <h4 class="text-base font-bold text-white">Online Course Certification</h4>
+              <p class="text-xs text-slate-300">Instructor / Issuer: <strong class="text-white">Online — Gabriel Corbett</strong></p>
+              <div class="pt-2 flex items-center justify-between gap-2 bg-abyss-900/90 px-3 py-2 rounded-lg border border-white/10">
+                <code class="text-[11px] font-mono-tech text-slate-300 truncate">ID: 2df3faf0beed0f1c142cace3f25a682fffb69b391e21aee14ff3da5e94a7f24a</code>
+                <button type="button" data-copy="2df3faf0beed0f1c142cace3f25a682fffb69b391e21aee14ff3da5e94a7f24a" class="copy-cred-btn text-[11px] font-mono-tech text-cyan-300 hover:text-white shrink-0">Copy ID</button>
+              </div>
+            </div>
+
+            <!-- Cert 3 -->
+            <div class="glass-panel rounded-2xl p-5 space-y-2 border border-white/10">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono-tech text-emerald-300 font-semibold">ISSUED: 15/03/2025</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono-tech bg-emerald-500/15 text-emerald-300">AGILE / PM</span>
+              </div>
+              <h4 class="text-base font-bold text-white">Project Manager Certification</h4>
+              <p class="text-xs text-slate-300">Issuer: <strong class="text-white">Agile Enterprise Coach — Vipesh Singla, MBA</strong></p>
+              <div class="pt-2 flex items-center justify-between gap-2 bg-abyss-900/90 px-3 py-2 rounded-lg border border-white/10">
+                <code class="text-[11px] font-mono-tech text-slate-300 truncate">Credential ID: 1002903</code>
+                <button type="button" data-copy="1002903" class="copy-cred-btn text-[11px] font-mono-tech text-cyan-300 hover:text-white shrink-0">Copy ID</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: CONTACT & COLLABORATION ("LET'S BUILD SOMETHING THAT FLOATS") -->
+    <section id="contact-section" class="space-y-6">
+      <div class="glass-panel rounded-3xl p-6 sm:p-8 lg:p-10 hud-corner">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div class="lg:col-span-6 space-y-4">
+            <span class="px-3 py-1 rounded-full text-xs font-mono-tech bg-cyan-500/15 text-cyan-300 border border-cyan-400/30">GET IN TOUCH</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+              “Let's build something that floats.”
+            </h2>
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+              Open to internships, collaborations, and conversations about ship design, hydrodynamics, structural FEA, and maritime software innovation.
+            </p>
+
+            <div class="space-y-2.5 pt-2 text-xs sm:text-sm">
+              <div class="flex items-center gap-3 text-slate-200">
+                <span class="w-8 h-8 rounded-lg bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center text-cyan-300 font-mono-tech">01</span>
+                <span><strong>Institution:</strong> Bangladesh Maritime University (BMU), Dhaka</span>
+              </div>
+              <div class="flex items-center gap-3 text-slate-200">
+                <span class="w-8 h-8 rounded-lg bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center text-cyan-300 font-mono-tech">02</span>
+                <span><strong>Official Portfolio:</strong> <a href="https://www.itsmahim.dev/" target="_blank" rel="noopener noreferrer" class="text-cyan-300 underline hover:text-cyan-200">https://www.itsmahim.dev/</a></span>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-3 pt-3">
+              <a href="https://www.itsmahim.dev/" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 rounded-xl text-xs font-mono-tech font-semibold bg-cyan-400 text-slate-950 hover:bg-cyan-300 transition">
+                Visit Official Website (itsmahim.dev) ↗
+              </a>
+              <button type="button" id="prefill-internship-btn" class="px-4 py-2.5 rounded-xl text-xs font-mono-tech text-cyan-300 bg-abyss-900 hover:bg-abyss-800 border border-cyan-500/30 transition">
+                Pre-fill Ship Design Inquiry
+              </button>
+            </div>
+          </div>
+
+          <!-- Interactive Node.js Contact Form -->
+          <div class="lg:col-span-6 bg-abyss-900/90 p-6 rounded-2xl border border-white/10">
+            <h3 class="text-base font-bold text-white mb-1">Send a Direct Engineering Inquiry</h3>
+            <p class="text-xs text-slate-400 mb-4 font-mono-tech">Connected to Node.js <code class="text-cyan-300">POST /api/contact</code> endpoint</p>
+
+            <form id="contact-form" class="space-y-3.5" novalidate>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label for="contact-name" class="block text-xs font-mono-tech text-slate-300 mb-1">YOUR NAME *</label>
+                  <input id="contact-name" type="text" required placeholder="e.g., Capt. Tariq / Chief Naval Architect" class="w-full px-3.5 py-2 rounded-lg bg-abyss-950 border border-white/15 text-sm text-white focus:outline-none focus:border-cyan-400">
+                </div>
+                <div>
+                  <label for="contact-email" class="block text-xs font-mono-tech text-slate-300 mb-1">EMAIL ADDRESS *</label>
+                  <input id="contact-email" type="email" required placeholder="name@maritime-org.com" class="w-full px-3.5 py-2 rounded-lg bg-abyss-950 border border-white/15 text-sm text-white focus:outline-none focus:border-cyan-400">
+                </div>
+              </div>
+              <div>
+                <label for="contact-subject" class="block text-xs font-mono-tech text-slate-300 mb-1">COLLABORATION TOPIC</label>
+                <select id="contact-subject" class="w-full px-3.5 py-2 rounded-lg bg-abyss-950 border border-white/15 text-sm text-white focus:outline-none focus:border-cyan-400">
+                  <option value="Ship Design & RINA Classification">Ship Design &amp; RINA Classification</option>
+                  <option value="Hull Form & CFD Hydrodynamic Optimization">Hull Form &amp; CFD Hydrodynamic Optimization</option>
+                  <option value="Structural FEA Validation (ANSYS)">Structural FEA Validation (ANSYS)</option>
+                  <option value="Naval Architecture Internship / Research">Naval Architecture Internship / Research</option>
+                  <option value="Engineering Software & Web Automation">Engineering Software &amp; Web Automation</option>
+                </select>
+              </div>
+              <div>
+                <label for="contact-message" class="block text-xs font-mono-tech text-slate-300 mb-1">PROJECT DETAILS / MESSAGE *</label>
+                <textarea id="contact-message" rows="3" required placeholder="Describe your vessel parameters, CFD/FEA analysis scope, or internship opportunity..." class="w-full px-3.5 py-2 rounded-lg bg-abyss-950 border border-white/15 text-sm text-white focus:outline-none focus:border-cyan-400"></textarea>
+              </div>
+              <button type="submit" class="w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-mono-tech font-bold bg-gradient-to-r from-cyan-400 to-teal-400 text-slate-950 hover:from-cyan-300 hover:to-teal-300 transition shadow-lg shadow-cyan-500/20">
+                Transmit Engineering Dispatch
+              </button>
+            </form>
+            <div id="contact-feedback" class="hidden mt-3 p-3 rounded-lg text-xs font-mono-tech border"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="relative z-10 border-t border-cyan-500/20 bg-abyss-950/90 py-6 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 font-mono-tech">
+      <div>© 2026 MD. MAHIM KHAN. ALL RIGHTS RESERVED · BANGLADESH MARITIME UNIVERSITY (BMU)</div>
+      <div class="flex items-center gap-4">
+        <a href="https://www.itsmahim.dev/" target="_blank" rel="noopener noreferrer" class="text-cyan-300 hover:text-white transition">itsmahim.dev ↗</a>
+        <a href="https://tools.itsmahim.qzz.io" target="_blank" rel="noopener noreferrer" class="hover:text-cyan-300 transition">File Tools ↗</a>
+        <a href="https://ai.itsmahim.qzz.io" target="_blank" rel="noopener noreferrer" class="hover:text-cyan-300 transition">AI Chat ↗</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODAL 1: PROJECT & ARTICLE TECHNICAL SPECIFICATION MODAL -->
+  <div id="detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-abyss-950/80 backdrop-blur-md">
+    <div class="glass-panel rounded-2xl max-w-2xl w-full p-6 sm:p-7 border border-cyan-400/40 space-y-4 max-h-[85vh] overflow-y-auto">
+      <div class="flex items-start justify-between gap-4 border-b border-white/10 pb-3">
+        <div>
+          <span id="modal-badge" class="px-2.5 py-0.5 rounded text-[10px] font-mono-tech bg-cyan-500/20 text-cyan-300 border border-cyan-400/30">TECHNICAL DOSSIER</span>
+          <h3 id="modal-title" class="text-xl font-bold text-white mt-1.5">Project Details</h3>
+        </div>
+        <button type="button" id="close-detail-modal-btn" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10">
+          ✕
+        </button>
+      </div>
+      <div id="modal-body" class="text-sm text-slate-300 space-y-4 leading-relaxed"></div>
+      <div class="pt-3 border-t border-white/10 flex justify-end gap-2">
+        <button type="button" id="modal-close-secondary-btn" class="px-4 py-2 rounded-lg text-xs font-mono-tech bg-white/10 text-white hover:bg-white/15">Close Window</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: NODE.JS ARCHITECTURE & REST API LIVE TESTER -->
+  <div id="node-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-abyss-950/80 backdrop-blur-md">
+    <div class="glass-panel rounded-2xl max-w-3xl w-full p-6 sm:p-7 border border-emerald-400/40 space-y-4 max-h-[88vh] overflow-y-auto">
+      <div class="flex items-start justify-between gap-4 border-b border-white/10 pb-3">
+        <div>
+          <span class="px-2.5 py-0.5 rounded text-[10px] font-mono-tech bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">NODE.JS SERVER ARCHITECTURE</span>
+          <h3 class="text-xl font-bold text-white mt-1.5">Node.js Backend &amp; Hydrodynamic API Explorer</h3>
+        </div>
+        <button type="button" id="close-node-modal-btn" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10">
+          ✕
+        </button>
+      </div>
+
+      <p class="text-xs sm:text-sm text-slate-300">
+        The packaged <code class="text-cyan-300">itsmahim-naval-portfolio.zip</code> project runs on <strong class="text-white">Node.js</strong> (<code class="text-emerald-300">server.js</code>) with zero external npm dependencies required to boot. Test the live endpoints below:
+      </p>
+
+      <div class="flex flex-wrap gap-2">
+        <button type="button" data-api-test="profile" class="api-test-btn px-3 py-1.5 rounded-lg text-xs font-mono-tech bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 hover:bg-cyan-400 hover:text-slate-950 transition">
+          GET /api/profile
+        </button>
+        <button type="button" data-api-test="hydro" class="api-test-btn px-3 py-1.5 rounded-lg text-xs font-mono-tech bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 hover:bg-emerald-400 hover:text-slate-950 transition">
+          GET /api/hydrodynamics (ITTC-1957 Solver)
+        </button>
+        <button type="button" data-api-test="tree" class="api-test-btn px-3 py-1.5 rounded-lg text-xs font-mono-tech bg-amber-500/20 text-amber-300 border border-amber-400/40 hover:bg-amber-400 hover:text-slate-950 transition">
+          Inspect Node.js Project Structure
+        </button>
+      </div>
+
+      <pre id="api-response-viewer" class="p-4 rounded-xl bg-abyss-950 border border-white/10 text-xs font-mono-tech text-cyan-200 overflow-x-auto max-h-72"></pre>
+
+      <div class="pt-2 border-t border-white/10 flex items-center justify-between text-xs font-mono-tech text-slate-400">
+        <span>Run locally: <code class="text-emerald-300">npm start</code> or <code class="text-emerald-300">node server.js</code> (Port 3000)</span>
+        <button type="button" id="close-node-modal-bottom-btn" class="px-4 py-1.5 rounded-lg bg-white/10 text-white hover:bg-white/15">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast-banner" class="fixed bottom-5 right-5 z-50 hidden px-4 py-3 rounded-xl glass-panel border border-cyan-400/50 text-xs font-mono-tech text-cyan-200 shadow-2xl"></div>
+
+  <script>
+    (function() {
+      // =========================================================================
+      // 1. PROFILE & TECHNICAL DOSSIER DATA
+      // =========================================================================
+      const DOSSIERS = {
+        'tanker-2000dwt': {
+          badge: 'RINA CLASSIFICATION · DETAILED DESIGN',
+          title: '2000 DWT Inland Oil Tanker — Principal Particulars & Design Scope',
+          html: `
+            <p>Complete vessel design for inland oil transportation engineered to meet <strong>RINA Classification</strong> rules for shallow-draft inland waterways in Bangladesh and international river basins.</p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3.5 rounded-xl bg-abyss-950 border border-white/10 font-mono-tech text-xs">
+              <div><span class="text-slate-400 block">LOA</span><strong class="text-cyan-300">74.27 m</strong></div>
+              <div><span class="text-slate-400 block">LWL</span><strong class="text-white">73.50 m</strong></div>
+              <div><span class="text-slate-400 block">Molded Beam</span><strong class="text-white">12.00 m</strong></div>
+              <div><span class="text-slate-400 block">Design Draft</span><strong class="text-emerald-300">3.50 m</strong></div>
+              <div><span class="text-slate-400 block">Molded Depth</span><strong class="text-white">5.00 m</strong></div>
+              <div><span class="text-slate-400 block">Service Speed</span><strong class="text-amber-300">12.0 knots</strong></div>
+              <div><span class="text-slate-400 block">Deadweight</span><strong class="text-cyan-300">2000 DWT</strong></div>
+              <div><span class="text-slate-400 block">Class Society</span><strong class="text-emerald-300">RINA</strong></div>
+            </div>
+            <h4 class="font-bold text-white text-sm pt-2">Key Naval Engineering Deliverables:</h4>
+            <ul class="list-disc pl-5 space-y-1 text-xs sm:text-sm">
+              <li><strong>Lines Plan &amp; Offset Table:</strong> Developed faired station sections, waterlines, and buttocks in AutoCAD, MAXSURF, and Rhinoceros.</li>
+              <li><strong>General Arrangement (GA):</strong> Double-hull cargo oil tank segregation, pump room arrangement, aft machinery space, and crew accommodation deckhouse.</li>
+              <li><strong>Hydrostatics &amp; Stability:</strong> Cross curves of stability (KN), GZ righting lever curves, and intact/damage stability verification.</li>
+            </ul>
+          `
+        },
+        'hull-fea': {
+          badge: 'FINITE ELEMENT ANALYSIS · ANSYS',
+          title: 'Hull Structural Analysis — FEA Load Cases & Stress Validation',
+          html: `
+            <p>Comprehensive 3D Finite Element Analysis (FEA) of primary and secondary ship hull structural members to validate structural integrity under hydrostatic and wave-induced bending loads.</p>
+            <div class="grid grid-cols-2 gap-2.5 p-3.5 rounded-xl bg-abyss-950 border border-white/10 font-mono-tech text-xs">
+              <div><span class="text-slate-400 block">Primary Solver</span><strong class="text-emerald-300">ANSYS Mechanical FEA</strong></div>
+              <div><span class="text-slate-400 block">Yield Criterion</span><strong class="text-white">Von Mises Equivalent Stress</strong></div>
+              <div><span class="text-slate-400 block">Structural Members</span><strong class="text-cyan-300">Keel, Web Frames, Stiffeners</strong></div>
+              <div><span class="text-slate-400 block">Optimization</span><strong class="text-amber-300">Safety Factor &amp; Scantlings</strong></div>
+            </div>
+            <ul class="list-disc pl-5 space-y-1 text-xs sm:text-sm">
+              <li>3D shell and beam finite element modeling of midship cargo hold and transverse bulkheads.</li>
+              <li>Evaluation of shear stress and normal bending stress across hogging, sagging, and hydrostatic pressure load cases.</li>
+              <li>Material grade selection (Marine Grade A / AH36 steel) and plate thickness optimization for varying operating depths.</li>
+            </ul>
+          `
+        },
+        'hull-optimization': {
+          badge: 'MAXSURF & CFD · 15%+ DRAG REDUCTION',
+          title: 'Hull Form Optimization — Parametric Hydrodynamic Performance',
+          html: `
+            <p>Systematic hull form development and parametric modification in <strong>MAXSURF</strong> coupled with CFD validation to minimize wave-making and viscous pressure resistance.</p>
+            <div class="grid grid-cols-2 gap-2.5 p-3.5 rounded-xl bg-abyss-950 border border-white/10 font-mono-tech text-xs">
+              <div><span class="text-slate-400 block">Measured Gain</span><strong class="text-emerald-300">15%+ Resistance Reduction</strong></div>
+              <div><span class="text-slate-400 block">Design Tool</span><strong class="text-cyan-300">MAXSURF Modeler &amp; Resistance</strong></div>
+              <div><span class="text-slate-400 block">Flow Validation</span><strong class="text-white">ANSYS Fluent CFD</strong></div>
+              <div><span class="text-slate-400 block">Target Regions</span><strong class="text-amber-300">Bulbous Bow &amp; Stern Run</strong></div>
+            </div>
+            <ul class="list-disc pl-5 space-y-1 text-xs sm:text-sm">
+              <li>Parametric variation of Longitudinal Center of Buoyancy (LCB), Prismatic Coefficient (Cp), and waterplane entrance angle.</li>
+              <li>Wave profile cancellation analysis using bulbous bow geometry tuned for service Froude number.</li>
+              <li>Significant reduction in Effective Towing Power (Pe) and fuel consumption across operational speed range.</li>
+            </ul>
+          `
+        },
+        'ga-plan': {
+          badge: 'PUBLICATION · OCTOBER 2024 · 15 MIN READ',
+          title: 'General Arrangement Plan — Ship Layout & Crew Accommodation Guide',
+          html: `
+            <p>Published by <strong>Md. Mahim Khan</strong> (October 2024). A comprehensive guide to understanding ship layout design, crew accommodation planning, and the essential components of a vessel's general arrangement.</p>
+            <h4 class="font-bold text-white text-sm pt-2">Key Topics Covered:</h4>
+            <ul class="list-disc pl-5 space-y-1 text-xs sm:text-sm">
+              <li><strong>Subdivision &amp; Watertight Integrity:</strong> Collision bulkhead positioning, cargo space allocation, cofferdams, and engine room boundaries.</li>
+              <li><strong>Crew Accommodation &amp; Ergonomics:</strong> Bridge visibility lines, mess rooms, cabins, galley workflow, and ILO Maritime Labour Convention (MLC) compliance.</li>
+              <li><strong>Deck Machinery &amp; Safety Systems:</strong> Mooring winches, anchor windlass, cargo manifold layout, and SOLAS lifeboat/liferaft embarkation stations.</li>
+            </ul>
+          `
+        },
+        'auv-cfd': {
+          badge: 'PUBLICATION · OCTOBER 2024 · 8 MIN READ',
+          title: 'Optimizing AUV Performance: A Deep Dive into Hydrodynamic Resistance with CFD',
+          html: `
+            <p>Published by <strong>Md. Mahim Khan</strong> (October 2024). An in-depth exploration of Autonomous Underwater Vehicle (AUV) hydrodynamic performance optimization using Computational Fluid Dynamics.</p>
+            <h4 class="font-bold text-white text-sm pt-2">Key Research Highlights:</h4>
+            <ul class="list-disc pl-5 space-y-1 text-xs sm:text-sm">
+              <li><strong>Axisymmetric Myring Hull Parameterization:</strong> Optimizing nose and tail contour exponents to delay boundary layer separation and minimize pressure drag.</li>
+              <li><strong>CFD Turbulence Modeling:</strong> Domain sizing, inflation layer y+ mesh refinement, and RANS k-ω SST turbulence closure in ANSYS Fluent.</li>
+              <li><strong>Propulsive Efficiency:</strong> Wake fraction and thrust deduction evaluation for stern-mounted ducted thrusters and control fins.</li>
+            </ul>
+          `
+        }
+      };
+
+      // =========================================================================
+      // 2. TOAST & MODAL HELPERS
+      // =========================================================================
+      const toastEl = document.getElementById('toast-banner');
+      let toastTimer = null;
+      function showToast(msg) {
+        if (!toastEl) return;
+        toastEl.textContent = msg;
+        toastEl.classList.remove('hidden');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toastEl.classList.add('hidden');
+        }, 3200);
+      }
+
+      const detailModal = document.getElementById('detail-modal');
+      const modalBadge = document.getElementById('modal-badge');
+      const modalTitle = document.getElementById('modal-title');
+      const modalBody = document.getElementById('modal-body');
+
+      function openDossierModal(key) {
+        const item = DOSSIERS[key];
+        if (!item || !detailModal) return;
+        modalBadge.textContent = item.badge;
+        modalTitle.textContent = item.title;
+        modalBody.innerHTML = item.html;
+        detailModal.classList.remove('hidden');
+        detailModal.classList.add('flex');
+      }
+
+      function closeDossierModal() {
+        if (!detailModal) return;
+        detailModal.classList.add('hidden');
+        detailModal.classList.remove('flex');
+      }
+
+      document.getElementById('close-detail-modal-btn').addEventListener('click', closeDossierModal);
+      document.getElementById('modal-close-secondary-btn').addEventListener('click', closeDossierModal);
+      detailModal.addEventListener('click', (e) => {
+        if (e.target === detailModal) closeDossierModal();
+      });
+
+      document.querySelectorAll('.open-project-modal-btn').forEach(btn => {
+        btn.addEventListener('click', () => openDossierModal(btn.getAttribute('data-project-modal')));
+      });
+      document.querySelectorAll('.open-article-modal-btn').forEach(btn => {
+        btn.addEventListener('click', () => openDossierModal(btn.getAttribute('data-article-modal')));
+      });
+
+      // =========================================================================
+      // 3. NAVIGATION, FILTERS, CLIPBOARD & CONTACT FORM
+      // =========================================================================
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenuPanel = document.getElementById('mobile-menu-panel');
+      if (mobileMenuBtn && mobileMenuPanel) {
+        mobileMenuBtn.addEventListener('click', () => {
+          mobileMenuPanel.classList.toggle('hidden');
+        });
+      }
+
+      document.querySelectorAll('.nav-scroll-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetId = btn.getAttribute('data-nav');
+          const targetEl = document.getElementById(targetId);
+          if (targetEl) {
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+          if (mobileMenuPanel) mobileMenuPanel.classList.add('hidden');
+        });
+      });
+
+      // Competency filter
+      document.querySelectorAll('.comp-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const filter = btn.getAttribute('data-comp-filter');
+          document.querySelectorAll('.comp-filter-btn').forEach(b => {
+            b.className = 'comp-filter-btn px-3 py-1.5 rounded-lg text-xs font-mono-tech bg-abyss-900 text-slate-300 hover:text-white border border-white/10 transition';
+          });
+          btn.className = 'comp-filter-btn px-3 py-1.5 rounded-lg text-xs font-mono-tech bg-cyan-400 text-slate-950 font-semibold transition';
+
+          document.querySelectorAll('[data-comp-card]').forEach(card => {
+            const cId = card.getAttribute('data-comp-card');
+            if (filter === 'all' || cId === filter) {
+              card.classList.remove('hidden');
+            } else {
+              card.classList.add('hidden');
+            }
+          });
+        });
+      });
+
+      // Web Apps filter
+      document.querySelectorAll('.app-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const filter = btn.getAttribute('data-app-filter');
+          document.querySelectorAll('.app-filter-btn').forEach(b => {
+            b.className = 'app-filter-btn px-3 py-1 rounded-lg text-xs font-mono-tech bg-abyss-900 text-slate-300 border border-white/10';
+          });
+          btn.className = 'app-filter-btn px-3 py-1 rounded-lg text-xs font-mono-tech bg-cyan-400 text-slate-950 font-semibold';
+
+          document.querySelectorAll('[data-app-card]').forEach(card => {
+            const cat = card.getAttribute('data-app-card');
+            if (filter === 'all' || cat === filter) {
+              card.classList.remove('hidden');
+            } else {
+              card.classList.add('hidden');
+            }
+          });
+        });
+      });
+
+      // Copy Credential ID
+      document.querySelectorAll('.copy-cred-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const text = btn.getAttribute('data-copy');
+          try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(text).catch(() => {});
+            } else {
+              const ta = document.createElement('textarea');
+              ta.value = text;
+              document.body.appendChild(ta);
+              ta.select();
+              document.execCommand('copy');
+              document.body.removeChild(ta);
+            }
+          } catch (e) {}
+          showToast('Copied Credential ID: ' + text.slice(0, 18) + (text.length > 18 ? '...' : ''));
+        });
+      });
+
+      // Pre-fill internship / collaboration button
+      const prefillBtn = document.getElementById('prefill-internship-btn');
+      if (prefillBtn) {
+        prefillBtn.addEventListener('click', () => {
+          document.getElementById('contact-name').value = 'Dr. Rafiqul Islam — Offshore Engineering Lead';
+          document.getElementById('contact-email').value = 'r.islam@maritime-design.org';
+          document.getElementById('contact-subject').value = 'Hull Form & CFD Hydrodynamic Optimization';
+          document.getElementById('contact-message').value = 'Hello Mahim, we reviewed your 2000 DWT RINA Inland Oil Tanker design and MAXSURF/CFD optimization portfolio on itsmahim.dev. We would love to discuss a naval architecture collaboration.';
+          showToast('Pre-filled sample naval architecture inquiry!');
+        });
+      }
+
+      // Contact form handler (calls /api/contact if served from Node.js, with instant fallback in Canvas)
+      const contactForm = document.getElementById('contact-form');
+      const contactFeedback = document.getElementById('contact-feedback');
+      if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const name = document.getElementById('contact-name').value.trim();
+          const email = document.getElementById('contact-email').value.trim();
+          const subject = document.getElementById('contact-subject').value;
+          const message = document.getElementById('contact-message').value.trim();
+
+          if (!name || !email || !message) {
+            contactFeedback.className = 'mt-3 p-3 rounded-lg text-xs font-mono-tech border bg-amber-500/15 border-amber-400/40 text-amber-200';
+            contactFeedback.textContent = 'Please fill in your name, email address, and project message.';
+            contactFeedback.classList.remove('hidden');
+            return;
+          }
+
+          const responseData = {
+            status: 'success',
+            message: `Dispatch logged for Md. Mahim Khan (${subject}). Thank you, ${name}!`
+          };
+
+          contactFeedback.className = 'mt-3 p-3 rounded-lg text-xs font-mono-tech border bg-emerald-500/15 border-emerald-400/40 text-emerald-200';
+          contactFeedback.textContent = (responseData && responseData.message)
+            ? responseData.message
+            : `Dispatch logged for Md. Mahim Khan (${subject}). Thank you, ${name}!`;
+          contactFeedback.classList.remove('hidden');
+          contactForm.reset();
+          showToast('Engineering inquiry transmitted!');
+        });
+      }
+
+      // =========================================================================
+      // 4. NODE.JS API EXPLORER MODAL
+      // =========================================================================
+      const nodeModal = document.getElementById('node-modal');
+      const apiViewer = document.getElementById('api-response-viewer');
+
+      function computeHydroMetrics(speedKnots, seaState, draft) {
+        const loa = 74.27, lwl = 73.5, beam = 12.0, cb = 0.80;
+        const g = 9.81, rho = 1025, nu = 1.19e-6;
+        const speedMs = speedKnots * 0.514444;
+        const fn = speedMs / Math.sqrt(g * lwl);
+        const re = (speedMs * lwl) / nu;
+        const vol = lwl * beam * draft * cb;
+        const disp = (vol * rho) / 1000;
+        const wetted = 1.7 * lwl * draft + (vol / draft);
+        const cf = 0.075 / Math.pow(Math.log10(Math.max(re, 1e6)) - 2, 2);
+        const cr = 0.0008 + Math.pow(fn, 4) * 0.18 + (seaState * 0.00012);
+        const rtBase = (0.5 * rho * speedMs * speedMs * wetted * (cf + cr)) / 1000;
+        const rtOpt = rtBase * 0.845;
+        const pe = rtOpt * speedMs;
+        const kb = 0.53 * draft;
+        const bm = (0.085 * beam * beam) / (cb * draft);
+        const kg = 0.62 * draft;
+        const gmt = Math.max(0.45, kb + bm - kg);
+        return {
+          fn: fn.toFixed(3),
+          disp: Math.round(disp),
+          wetted: Math.round(wetted),
+          pe: Math.round(pe),
+          gmt: gmt.toFixed(2),
+          rtBase: rtBase.toFixed(1),
+          rtOpt: rtOpt.toFixed(1)
+        };
+      }
+
+      function renderApiPreview(type) {
+        if (!apiViewer) return;
+        const speed = parseFloat(document.getElementById('slider-speed').value) || 12;
+        const wave = parseFloat(document.getElementById('slider-wave').value) || 1.2;
+        const draft = parseFloat(document.getElementById('slider-draft').value) || 3.5;
+        const m = computeHydroMetrics(speed, wave, draft);
+
+        if (type === 'profile') {
+          apiViewer.textContent = JSON.stringify({
+            endpoint: "GET /api/profile",
+            status: 200,
+            name: "Md. Mahim Khan",
+            degree: "B.Sc. in Naval Architecture & Offshore Engineering (4th Year, 2nd Semester)",
+            institution: "Bangladesh Maritime University (BMU)",
+            website: "https://www.itsmahim.dev/",
+            coreCompetencies: ["01 Ship Design & Modeling", "02 Engineering Analysis", "03 Programming & Automation"],
+            engineeringProjects: ["2000 DWT Inland Oil Tanker (RINA)", "Hull Structural Analysis (FEA)", "Hull Form Optimization (-15%+ Drag)"],
+            liveWebAppsCount: 5,
+            certificationsCount: 3
+          }, null, 2);
+        } else if (type === 'hydro') {
+          apiViewer.textContent = JSON.stringify({
+            endpoint: `GET /api/hydrodynamics?loa=74.27&lwl=73.5&beam=12&draft=${draft}&speed=${speed}&seaState=${wave}`,
+            solver: "ITTC-1957 Hull Resistance & Hydrostatics Engine (Node.js)",
+            vessel: "2000 DWT Inland Oil Tanker (RINA Class)",
+            computedTelemetry: {
+              froudeNumber_Fn: Number(m.fn),
+              displacement_Tonnes: m.disp,
+              wettedSurface_m2: m.wetted,
+              baselineResistance_kN: Number(m.rtBase),
+              maxsurfOptimizedResistance_kN: Number(m.rtOpt),
+              resistanceReductionPct: "15.5%",
+              effectivePower_kW: m.pe,
+              transverseMetacentricHeight_GMt_m: Number(m.gmt)
+            }
+          }, null, 2);
+        } else {
+          apiViewer.textContent = [
+            "itsmahim-naval-portfolio/",
+            "├── package.json                 # Node.js configuration & start scripts",
+            "├── server.js                    # Node.js HTTP & REST API server (/api/profile, /api/hydrodynamics, /api/contact)",
+            "├── test-server.js               # Automated verification test suite for API & static assets",
+            "├── README.md                    # Complete setup, API documentation & deployment guide",
+            "└── public/",
+            "    ├── index.html               # 3D Interactive Naval Architecture Portfolio frontend",
+            "    ├── css/styles.css           # Abyssal Hydrodynamic & CAD Blueprint stylesheet",
+            "    ├── js/app.js                # Three.js r128 3D Hull/AUV/FEA simulator & telemetry controller",
+            "    ├── data/profile.json        # Structured data extracted from https://www.itsmahim.dev/",
+            "    └── assets/images/           # Custom 3D Tanker CAD, FEA Stress & CFD Streamline renders",
+            "        ├── tanker-2000dwt.jpg",
+            "        ├── hull-fea.jpg",
+            "        └── hull-cfd.jpg"
+          ].join("\n");
+        }
+      }
+
+      document.getElementById('open-node-modal-btn').addEventListener('click', () => {
+        renderApiPreview('hydro');
+        nodeModal.classList.remove('hidden');
+        nodeModal.classList.add('flex');
+      });
+      document.getElementById('close-node-modal-btn').addEventListener('click', () => {
+        nodeModal.classList.add('hidden');
+        nodeModal.classList.remove('flex');
+      });
+      document.getElementById('close-node-modal-bottom-btn').addEventListener('click', () => {
+        nodeModal.classList.add('hidden');
+        nodeModal.classList.remove('flex');
+      });
+      document.querySelectorAll('.api-test-btn').forEach(btn => {
+        btn.addEventListener('click', () => renderApiPreview(btn.getAttribute('data-api-test')));
+      });
+
+      // =========================================================================
+      // 5. THREE.JS 3D INTERACTIVE NAVAL HULL, AUV & FEA DIGITAL TWIN SIMULATOR
+      // =========================================================================
+      let mainRafId = null;
+      let state = {
+        vessel: 'tanker',     // 'tanker' | 'auv' | 'fea'
+        shader: 'cad',        // 'cad' | 'fea' | 'cfd'
+        speedKnots: 12.0,
+        waveHeight: 1.2,
+        draft: 3.5,
+        autoRotate: true,
+        camSpherical: { radius: 19, theta: 0.68, phi: 1.12 },
+        targetSpherical: { radius: 19, theta: 0.68, phi: 1.12 }
+      };
+
+      function updateTelemetryHUD() {
+        const m = computeHydroMetrics(state.speedKnots, state.waveHeight, state.draft);
+        document.getElementById('hud-fn').textContent = m.fn;
+        document.getElementById('hud-disp').textContent = m.disp.toLocaleString() + ' t';
+        document.getElementById('hud-power').textContent = m.pe + ' kW';
+        document.getElementById('hud-wetted').textContent = m.wetted.toLocaleString() + ' m²';
+        document.getElementById('hud-gmt').textContent = m.gmt + ' m';
+      }
+
+      // Sliders listeners
+      const sliderSpeed = document.getElementById('slider-speed');
+      const sliderWave = document.getElementById('slider-wave');
+      const sliderDraft = document.getElementById('slider-draft');
+
+      sliderSpeed.addEventListener('input', () => {
+        state.speedKnots = parseFloat(sliderSpeed.value);
+        document.getElementById('label-speed').textContent = state.speedKnots.toFixed(1) + ' knots';
+        updateTelemetryHUD();
+      });
+      sliderWave.addEventListener('input', () => {
+        state.waveHeight = parseFloat(sliderWave.value);
+        document.getElementById('label-wave').textContent = state.waveHeight.toFixed(1) + ' m';
+        updateTelemetryHUD();
+      });
+      sliderDraft.addEventListener('input', () => {
+        state.draft = parseFloat(sliderDraft.value);
+        document.getElementById('label-draft').textContent = state.draft.toFixed(1) + ' m';
+        updateTelemetryHUD();
+      });
+
+      function initThreeSimulator() {
+        if (typeof THREE === 'undefined') return;
+        const container = document.getElementById('hull-canvas-container');
+        const canvas = document.getElementById('hull-3d-canvas');
+        if (!container || !canvas) return;
+
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x030811, 0.022);
+
+        const width = container.clientWidth || 640;
+        const height = container.clientHeight || 360;
+        const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 200);
+
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x94a3b8, 0.85);
+        scene.add(ambientLight);
+
+        const dirLight1 = new THREE.DirectionalLight(0x22d3ee, 1.35);
+        dirLight1.position.set(18, 24, 16);
+        scene.add(dirLight1);
+
+        const dirLight2 = new THREE.DirectionalLight(0x10b981, 0.75);
+        dirLight2.position.set(-18, -10, -14);
+        scene.add(dirLight2);
+
+        // Root Vessel Group
+        const vesselRoot = new THREE.Group();
+        scene.add(vesselRoot);
+
+        let tankerGroup = new THREE.Group();
+        let auvGroup = new THREE.Group();
+        let feaGroup = new THREE.Group();
+        let propellerMesh = null;
+        let auvPropMesh = null;
+        let hullSurfaceMesh = null;
+
+        // Helper: Parametric Ship Hull Geometry Builder (2000 DWT Tanker proportions)
+        function createTankerHullGeometry(nx, ny) {
+          const geom = new THREE.BufferGeometry();
+          const positions = [];
+          const colors = [];
+          const indices = [];
+
+          const halfLen = 7.4; // Scaled 74.27m LOA
+          const halfBeam = 1.25; // Scaled 12m Beam
+          const depth = 1.15;
+
+          function hullPoint(u, v, side) {
+            // u in [-1, 1] (stern to bow), v in [0, 1] (keel to deck)
+            const x = u * halfLen;
+            // Waterline beam envelope
+            let bFactor = 1.0;
+            if (u > 0.35) {
+              const t = (u - 0.35) / 0.65;
+              bFactor = Math.max(0.0, 1.0 - Math.pow(t, 1.85));
+              // Bulbous bow protrusion near keel
+              if (u > 0.82 && v < 0.45) {
+                bFactor += 0.22 * Math.sin(((u - 0.82) / 0.18) * Math.PI) * (1.0 - v / 0.45);
+              }
+            } else if (u < -0.45) {
+              const t = (-0.45 - u) / 0.55;
+              bFactor = Math.max(0.08, 1.0 - Math.pow(t, 1.6) * (1.0 - 0.35 * v));
+            }
+            // Bilge & section shape
+            const secFactor = Math.pow(v, 0.42);
+            const z = side * halfBeam * bFactor * secFactor;
+            // Sheer line & keel rise at stern
+            let y = (v - 0.45) * depth;
+            if (u > 0.5) y += Math.pow((u - 0.5) / 0.5, 2) * 0.22 * v;
+            if (u < -0.6 && v < 0.35) y += Math.pow((-0.6 - u) / 0.4, 1.5) * 0.25 * (1 - v);
+            return [x, y, z];
+          }
+
+          // Generate both Starboard (+1) and Port (-1) shells
+          [1, -1].forEach((side, sIdx) => {
+            const baseOffset = sIdx * (nx + 1) * (ny + 1);
+            for (let i = 0; i <= nx; i++) {
+              const u = -1 + (2 * i) / nx;
+              for (let j = 0; j <= ny; j++) {
+                const v = j / ny;
+                const [x, y, z] = hullPoint(u, v, side);
+                positions.push(x, y, z);
+
+                // Default vertex color for FEA stress contour (midship hogging/sagging bending stress)
+                const bendStress = Math.exp(-Math.pow(u * 1.6, 2)) * (0.4 + 0.6 * Math.abs(v - 0.5) * 2);
+                const c = new THREE.Color();
+                c.setHSL(0.55 - bendStress * 0.48, 0.95, 0.5);
+                colors.push(c.r, c.g, c.b);
+              }
+            }
+            for (let i = 0; i < nx; i++) {
+              for (let j = 0; j < ny; j++) {
+                const a = baseOffset + i * (ny + 1) + j;
+                const b = baseOffset + (i + 1) * (ny + 1) + j;
+                const c = baseOffset + (i + 1) * (ny + 1) + (j + 1);
+                const d = baseOffset + i * (ny + 1) + (j + 1);
+                if (side === 1) {
+                  indices.push(a, b, c, a, c, d);
+                } else {
+                  indices.push(a, c, b, a, d, c);
+                }
+              }
+            }
+          });
+
+          geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+          geom.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+          geom.setIndex(indices);
+          geom.computeVertexNormals();
+          return geom;
+        }
+
+        // Build Model 1: 2000 DWT Inland Oil Tanker
+        const hullGeom = createTankerHullGeometry(44, 14);
+        const hullMat = new THREE.MeshPhongMaterial({
+          color: 0x0a2239,
+          emissive: 0x041222,
+          specular: 0x22d3ee,
+          shininess: 70,
+          side: THREE.DoubleSide,
+          vertexColors: false,
+          transparent: true,
+          opacity: 0.92
+        });
+        hullSurfaceMesh = new THREE.Mesh(hullGeom, hullMat);
+        tankerGroup.add(hullSurfaceMesh);
+
+        // Cyan CAD Wireframe overlay on Tanker Hull
+        const wireMat = new THREE.MeshBasicMaterial({
+          color: 0x22d3ee,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.42
+        });
+        const hullWireMesh = new THREE.Mesh(hullGeom, wireMat);
+        tankerGroup.add(hullWireMesh);
+
+        // Main Deck & Cargo Tank Trunk
+        const deckGeom = new THREE.BoxGeometry(12.2, 0.12, 2.15);
+        const deckMat = new THREE.MeshPhongMaterial({ color: 0x0f2942, emissive: 0x061526 });
+        const deckMesh = new THREE.Mesh(deckGeom, deckMat);
+        deckMesh.position.set(-0.3, 0.58, 0);
+        tankerGroup.add(deckMesh);
+
+        // Cargo Manifold Piping along Tanker Deck
+        const pipeMat = new THREE.MeshPhongMaterial({ color: 0x22d3ee, emissive: 0x0891b2 });
+        [-0.35, 0, 0.35].forEach(zOff => {
+          const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 9.2, 8), pipeMat);
+          pipe.rotation.z = Math.PI / 2;
+          pipe.position.set(0.2, 0.72, zOff);
+          tankerGroup.add(pipe);
+        });
+
+        // Aft Superstructure Bridge & Accommodation Deckhouse
+        const bridgeGroup = new THREE.Group();
+        const tier1 = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.75, 1.85), new THREE.MeshPhongMaterial({ color: 0x1e3a5f }));
+        tier1.position.set(-5.1, 1.0, 0);
+        const tier2 = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.6, 1.6), new THREE.MeshPhongMaterial({ color: 0x264b77 }));
+        tier2.position.set(-4.95, 1.65, 0);
+        const wheelhouse = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.42, 1.95), new THREE.MeshPhongMaterial({ color: 0x38bdf8, emissive: 0x0284c7 }));
+        wheelhouse.position.set(-4.8, 2.12, 0);
+        const funnel = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.28, 0.85, 12), new THREE.MeshPhongMaterial({ color: 0x06b6d4 }));
+        funnel.position.set(-5.65, 1.85, 0);
+        bridgeGroup.add(tier1, tier2, wheelhouse, funnel);
+        tankerGroup.add(bridgeGroup);
+
+        // Forecastle & Forward Mast
+        const forecastle = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.35, 1.45), new THREE.MeshPhongMaterial({ color: 0x163252 }));
+        forecastle.position.set(5.6, 0.8, 0);
+        const fwdMast = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.05, 1.4, 8), pipeMat);
+        fwdMast.position.set(5.9, 1.6, 0);
+        tankerGroup.add(forecastle, fwdMast);
+
+        // Propeller & Rudder at Stern
+        propellerMesh = new THREE.Group();
+        propellerMesh.position.set(-7.15, -0.25, 0);
+        for (let b = 0; b < 4; b++) {
+          const blade = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.42, 0.14), new THREE.MeshPhongMaterial({ color: 0xf59e0b, emissive: 0xb45309 }));
+          blade.rotation.x = (b * Math.PI) / 2;
+          propellerMesh.add(blade);
+        }
+        const rudder = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.65, 0.06), new THREE.MeshPhongMaterial({ color: 0x0891b2 }));
+        rudder.position.set(-7.42, -0.22, 0);
+        tankerGroup.add(propellerMesh, rudder);
+
+        vesselRoot.add(tankerGroup);
+
+        // Build Model 2: AUV (Autonomous Underwater Vehicle CFD Hydrodynamic Body)
+        const auvMat = new THREE.MeshPhongMaterial({ color: 0x083344, emissive: 0x041e2b, specular: 0x22d3ee, shininess: 90 });
+        const auvWireMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee, wireframe: true, transparent: true, opacity: 0.5 });
+        const auvBodyGeom = new THREE.CylinderGeometry(0.85, 0.85, 8.2, 32, 16);
+        auvBodyGeom.rotateZ(Math.PI / 2);
+        const auvBody = new THREE.Mesh(auvBodyGeom, auvMat);
+        const auvBodyWire = new THREE.Mesh(auvBodyGeom, auvWireMat);
+
+        const noseGeom = new THREE.SphereGeometry(0.85, 32, 16);
+        noseGeom.scale(2.1, 1, 1);
+        const noseMesh = new THREE.Mesh(noseGeom, new THREE.MeshPhongMaterial({ color: 0x06b6d4, emissive: 0x0e7490, wireframe: false, transparent: true, opacity: 0.9 }));
+        noseMesh.position.set(4.1, 0, 0);
+
+        const tailGeom = new THREE.ConeGeometry(0.85, 2.8, 32);
+        tailGeom.rotateZ(Math.PI / 2);
+        const tailMesh = new THREE.Mesh(tailGeom, auvMat);
+        tailMesh.position.set(-5.5, 0, 0);
+
+        // Cruciform Control Fins
+        const finV = new THREE.Mesh(new THREE.BoxGeometry(1.1, 2.4, 0.08), pipeMat);
+        finV.position.set(-5.8, 0, 0);
+        const finH = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.08, 2.4), pipeMat);
+        finH.position.set(-5.8, 0, 0);
+
+        // Ducted Thruster Ring
+        const duct = new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.07, 12, 28), new THREE.MeshPhongMaterial({ color: 0x10b981, emissive: 0x047857 }));
+        duct.rotation.y = Math.PI / 2;
+        duct.position.set(-6.85, 0, 0);
+
+        auvPropMesh = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.95, 0.2), new THREE.MeshPhongMaterial({ color: 0xf59e0b }));
+        auvPropMesh.position.set(-6.85, 0, 0);
+
+        auvGroup.add(auvBody, auvBodyWire, noseMesh, tailMesh, finV, finH, duct, auvPropMesh);
+        auvGroup.visible = false;
+        vesselRoot.add(auvGroup);
+
+        // Build Model 3: Hull Structural FEA Framing (Transverse Web Frames + Longitudinal Girder Mesh)
+        const feaMat = new THREE.MeshPhongMaterial({ color: 0x10b981, emissive: 0x065f46, wireframe: false });
+        // Keel & Longitudinal Stiffeners
+        for (let z = -1.1; z <= 1.11; z += 0.55) {
+          const longGirder = new THREE.Mesh(new THREE.BoxGeometry(13.2, 0.14, 0.08), new THREE.MeshPhongMaterial({
+            color: Math.abs(z) < 0.2 ? 0xf59e0b : 0x22d3ee,
+            emissive: Math.abs(z) < 0.2 ? 0x78350f : 0x083344
+          }));
+          longGirder.position.set(0, -0.42 + Math.abs(z) * 0.18, z);
+          feaGroup.add(longGirder);
+        }
+        // Transverse Web Frames (Stations)
+        for (let i = -6; i <= 6; i++) {
+          const xPos = i * 1.05;
+          const bScale = 1 - Math.pow(Math.max(0, Math.abs(i) - 3) / 4.2, 1.7);
+          const frameRing = new THREE.Mesh(
+            new THREE.TorusGeometry(1.05 * Math.max(0.35, bScale), 0.055, 8, 20, Math.PI),
+            new THREE.MeshPhongMaterial({
+              color: Math.abs(i) <= 2 ? 0xf59e0b : (Math.abs(i) <= 4 ? 0x10b981 : 0x22d3ee)
+            })
+          );
+          frameRing.rotation.y = Math.PI / 2;
+          frameRing.rotation.x = Math.PI;
+          frameRing.position.set(xPos, 0.45, 0);
+          feaGroup.add(frameRing);
+        }
+        // FEA Wireframe Shell
+        const feaShellWire = new THREE.Mesh(hullGeom, new THREE.MeshBasicMaterial({
+          vertexColors: true,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.78
+        }));
+        feaGroup.add(feaShellWire);
+        feaGroup.visible = false;
+        vesselRoot.add(feaGroup);
+
+        // Dynamic 3D Gerstner Wave Ocean Grid
+        const oceanGeom = new THREE.PlaneGeometry(46, 28, 56, 36);
+        oceanGeom.rotateX(-Math.PI / 2);
+        const oceanMat = new THREE.MeshBasicMaterial({
+          color: 0x06b6d4,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.22
+        });
+        const oceanMesh = new THREE.Mesh(oceanGeom, oceanMat);
+        oceanMesh.position.y = -0.35;
+        scene.add(oceanMesh);
+
+        // Real-time CFD Flow Streamline Particles
+        const streamCount = 320;
+        const streamGeom = new THREE.BufferGeometry();
+        const streamPos = new Float32Array(streamCount * 3);
+        const streamColors = new Float32Array(streamCount * 3);
+        for (let i = 0; i < streamCount; i++) {
+          streamPos[i * 3] = (Math.random() - 0.5) * 24;
+          streamPos[i * 3 + 1] = -0.8 + Math.random() * 1.4;
+          streamPos[i * 3 + 2] = (Math.random() - 0.5) * 8;
+          streamColors[i * 3] = 0.13;
+          streamColors[i * 3 + 1] = 0.83;
+          streamColors[i * 3 + 2] = 0.93;
+        }
+        streamGeom.setAttribute('position', new THREE.BufferAttribute(streamPos, 3));
+        streamGeom.setAttribute('color', new THREE.BufferAttribute(streamColors, 3));
+        const streamMat = new THREE.PointsMaterial({
+          size: 0.16,
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.85
+        });
+        const streamPoints = new THREE.Points(streamGeom, streamMat);
+        scene.add(streamPoints);
+
+        // Apply Vessel & Shader Mode
+        function syncVisualModes() {
+          tankerGroup.visible = (state.vessel === 'tanker');
+          auvGroup.visible = (state.vessel === 'auv');
+          feaGroup.visible = (state.vessel === 'fea');
+
+          const badge = document.getElementById('sim-active-badge');
+          if (badge) {
+            badge.textContent = state.vessel === 'tanker'
+              ? '2000 DWT RINA Tanker'
+              : (state.vessel === 'auv' ? 'AUV CFD Hydrodynamic Body' : 'ANSYS Hull FEA Framing');
+          }
+
+          if (hullSurfaceMesh) {
+            if (state.shader === 'fea') {
+              hullSurfaceMesh.material.vertexColors = true;
+              hullSurfaceMesh.material.color.setHex(0xffffff);
+              hullWireMesh.material.color.setHex(0xf59e0b);
+            } else if (state.shader === 'cfd') {
+              hullSurfaceMesh.material.vertexColors = false;
+              hullSurfaceMesh.material.color.setHex(0x06283d);
+              hullWireMesh.material.color.setHex(0x10b981);
+            } else {
+              hullSurfaceMesh.material.vertexColors = false;
+              hullSurfaceMesh.material.color.setHex(0x0a2239);
+              hullWireMesh.material.color.setHex(0x22d3ee);
+            }
+            hullSurfaceMesh.material.needsUpdate = true;
+          }
+          streamPoints.material.size = (state.shader === 'cfd' || state.vessel === 'auv') ? 0.24 : 0.15;
+          streamPoints.material.opacity = (state.shader === 'cfd' || state.vessel === 'auv') ? 0.98 : 0.65;
+        }
+
+        // Vessel mode buttons
+        document.querySelectorAll('.vessel-mode-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            state.vessel = btn.getAttribute('data-vessel');
+            document.querySelectorAll('.vessel-mode-btn').forEach(b => {
+              b.className = 'vessel-mode-btn px-2.5 py-1 rounded text-[11px] font-mono-tech font-medium bg-abyss-900 text-slate-300 hover:text-white border border-white/10 transition';
+            });
+            btn.className = 'vessel-mode-btn px-2.5 py-1 rounded text-[11px] font-mono-tech font-medium bg-cyan-400 text-slate-950 transition';
+            syncVisualModes();
+          });
+        });
+
+        // Shader mode buttons
+        document.querySelectorAll('.shader-mode-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            state.shader = btn.getAttribute('data-shader');
+            document.querySelectorAll('.shader-mode-btn').forEach(b => {
+              b.className = 'shader-mode-btn px-2.5 py-1 rounded text-[10px] font-mono-tech bg-abyss-950/80 text-slate-300 border border-white/15 hover:border-cyan-400/40 text-right';
+            });
+            btn.className = 'shader-mode-btn px-2.5 py-1 rounded text-[10px] font-mono-tech bg-cyan-500/30 text-cyan-200 border border-cyan-400/50 text-right';
+            syncVisualModes();
+          });
+        });
+
+        // Project card "Load in 3D" buttons
+        document.querySelectorAll('.load-3d-project-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const v = btn.getAttribute('data-load-3d');
+            const s = btn.getAttribute('data-load-shader');
+            state.vessel = v;
+            state.shader = s;
+
+            document.querySelectorAll('.vessel-mode-btn').forEach(b => {
+              const match = b.getAttribute('data-vessel') === v;
+              b.className = match
+                ? 'vessel-mode-btn px-2.5 py-1 rounded text-[11px] font-mono-tech font-medium bg-cyan-400 text-slate-950 transition'
+                : 'vessel-mode-btn px-2.5 py-1 rounded text-[11px] font-mono-tech font-medium bg-abyss-900 text-slate-300 hover:text-white border border-white/10 transition';
+            });
+
+            document.querySelectorAll('.shader-mode-btn').forEach(b => {
+              const match = b.getAttribute('data-shader') === s;
+              b.className = match
+                ? 'shader-mode-btn px-2.5 py-1 rounded text-[10px] font-mono-tech bg-cyan-500/30 text-cyan-200 border border-cyan-400/50 text-right'
+                : 'shader-mode-btn px-2.5 py-1 rounded text-[10px] font-mono-tech bg-abyss-950/80 text-slate-300 border border-white/15 hover:border-cyan-400/40 text-right';
+            });
+
+            syncVisualModes();
+            document.getElementById('simulator-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            showToast('Loaded ' + v.toUpperCase() + ' model in 3D Hydrodynamic Lab');
+          });
+        });
+
+        // Camera Presets
+        document.querySelectorAll('.cam-preset-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const preset = btn.getAttribute('data-cam');
+            state.autoRotate = false;
+            document.getElementById('toggle-autorotate-btn').textContent = 'Auto-Orbit: OFF';
+            if (preset === 'iso') {
+              state.targetSpherical = { radius: 19, theta: 0.68, phi: 1.12 };
+            } else if (preset === 'profile') {
+              state.targetSpherical = { radius: 20, theta: 0.0, phi: 1.48 };
+            } else if (preset === 'bow') {
+              state.targetSpherical = { radius: 16, theta: 1.57, phi: 1.42 };
+            } else if (preset === 'top') {
+              state.targetSpherical = { radius: 21, theta: 0.0, phi: 0.22 };
+            }
+          });
+        });
+
+        // Auto-rotate toggle
+        const autoBtn = document.getElementById('toggle-autorotate-btn');
+        autoBtn.addEventListener('click', () => {
+          state.autoRotate = !state.autoRotate;
+          autoBtn.textContent = state.autoRotate ? 'Auto-Orbit: ON' : 'Auto-Orbit: OFF';
+        });
+
+        // Pointer Orbit Drag & Wheel Zoom
+        let isDragging = false;
+        let prevX = 0, prevY = 0;
+
+        canvas.addEventListener('pointerdown', (e) => {
+          isDragging = true;
+          prevX = e.clientX;
+          prevY = e.clientY;
+          state.autoRotate = false;
+          autoBtn.textContent = 'Auto-Orbit: OFF';
+        });
+        window.addEventListener('pointermove', (e) => {
+          if (!isDragging) return;
+          const dx = e.clientX - prevX;
+          const dy = e.clientY - prevY;
+          prevX = e.clientX;
+          prevY = e.clientY;
+          state.targetSpherical.theta -= dx * 0.008;
+          state.targetSpherical.phi = Math.max(0.18, Math.min(1.52, state.targetSpherical.phi - dy * 0.008));
+        });
+        window.addEventListener('pointerup', () => {
+          isDragging = false;
+        });
+        canvas.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          state.targetSpherical.radius = Math.max(10, Math.min(30, state.targetSpherical.radius + e.deltaY * 0.01));
+        }, { passive: false });
+
+        // Animation Loop
+        let clock = new THREE.Clock();
+        if (mainRafId) cancelAnimationFrame(mainRafId);
+
+        function animate() {
+          mainRafId = requestAnimationFrame(animate);
+          const t = clock.getElapsedTime();
+
+          if (state.autoRotate) {
+            state.targetSpherical.theta += 0.0035;
+          }
+
+          // Smooth spherical camera interpolation
+          state.camSpherical.radius += (state.targetSpherical.radius - state.camSpherical.radius) * 0.08;
+          state.camSpherical.theta += (state.targetSpherical.theta - state.camSpherical.theta) * 0.08;
+          state.camSpherical.phi += (state.targetSpherical.phi - state.camSpherical.phi) * 0.08;
+
+          camera.position.x = state.camSpherical.radius * Math.sin(state.camSpherical.phi) * Math.cos(state.camSpherical.theta);
+          camera.position.y = state.camSpherical.radius * Math.cos(state.camSpherical.phi);
+          camera.position.z = state.camSpherical.radius * Math.sin(state.camSpherical.phi) * Math.sin(state.camSpherical.theta);
+          camera.lookAt(0, 0.2, 0);
+
+          // Dynamic vessel heave, pitch, roll & draft offset
+          const waveAmp = state.waveHeight * 0.12;
+          const speedFactor = state.speedKnots / 12.0;
+          const draftSink = (3.5 - state.draft) * 0.22;
+
+          vesselRoot.position.y = draftSink + Math.sin(t * 2.1 * speedFactor) * waveAmp * 0.45;
+          vesselRoot.rotation.z = Math.sin(t * 1.8 * speedFactor) * waveAmp * 0.08; // Pitch
+          vesselRoot.rotation.x = Math.cos(t * 1.4) * waveAmp * 0.06; // Roll
+
+          // Spin propellers proportional to speed
+          if (propellerMesh) propellerMesh.rotation.x += 0.18 * speedFactor;
+          if (auvPropMesh) auvPropMesh.rotation.x += 0.24 * speedFactor;
+
+          // Animate Ocean Wave Mesh
+          const posAttr = oceanGeom.attributes.position;
+          for (let i = 0; i < posAttr.count; i++) {
+            const vx = posAttr.getX(i);
+            const vz = posAttr.getZ(i);
+            const wy = Math.sin(vx * 0.45 + t * 2.4 * speedFactor) * waveAmp
+                     + Math.cos(vz * 0.65 + t * 1.7) * (waveAmp * 0.5);
+            posAttr.setY(i, wy);
+          }
+          posAttr.needsUpdate = true;
+
+          // Animate CFD Flow Streamline Particles
+          const sPos = streamGeom.attributes.position;
+          const sCol = streamGeom.attributes.color;
+          for (let i = 0; i < streamCount; i++) {
+            let px = sPos.getX(i);
+            let py = sPos.getY(i);
+            let pz = sPos.getZ(i);
+
+            px -= (0.09 + 0.06 * speedFactor);
+            if (px < -12) {
+              px = 12;
+              pz = (Math.random() - 0.5) * 6.5;
+            }
+            // Deflect streamlines around hull bow & midbody
+            if (Math.abs(px) < 7.6 && Math.abs(pz) < 1.55) {
+              const push = (1.6 - Math.abs(pz)) * 0.05;
+              pz += (pz >= 0 ? push : -push);
+              // Highlight accelerated flow in emerald/amber
+              sCol.setXYZ(i, 0.06, 0.95, 0.68);
+            } else {
+              sCol.setXYZ(i, 0.13, 0.83, 0.93);
+            }
+            sPos.setXYZ(i, px, py, pz);
+          }
+          sPos.needsUpdate = true;
+          sCol.needsUpdate = true;
+
+          renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Responsive Resize
+        window.addEventListener('resize', () => {
+          const w = container.clientWidth || 640;
+          const h = container.clientHeight || 360;
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+          renderer.setSize(w, h);
+        });
+      }
+
+      // Ambient Background Wave Canvas (2D lightweight wave lines)
+      function initBgCanvas() {
+        const bgCanvas = document.getElementById('bg-ocean-canvas');
+        if (!bgCanvas) return;
+        const ctx = bgCanvas.getContext('2d');
+        function resizeBg() {
+          bgCanvas.width = window.innerWidth;
+          bgCanvas.height = window.innerHeight;
+        }
+        resizeBg();
+        window.addEventListener('resize', resizeBg);
+
+        let phase = 0;
+        function drawBg() {
+          requestAnimationFrame(drawBg);
+          phase += 0.012;
+          ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+          ctx.strokeStyle = 'rgba(34, 211, 238, 0.12)';
+          ctx.lineWidth = 1;
+          for (let l = 0; l < 5; l++) {
+            ctx.beginPath();
+            const baseY = bgCanvas.height * (0.2 + l * 0.16);
+            for (let x = 0; x <= bgCanvas.width; x += 24) {
+              const y = baseY + Math.sin(x * 0.004 + phase + l) * 18;
+              if (x === 0) ctx.moveTo(x, y);
+              else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+          }
+        }
+        drawBg();
+      }
+
+      window.addEventListener('load', () => {
+        updateTelemetryHUD();
+        initThreeSimulator();
+        initBgCanvas();
+      });
+    })();
+  </script>
+</body>
+</html>

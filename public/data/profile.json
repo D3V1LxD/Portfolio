@@ -1,0 +1,281 @@
+{
+  "name": "Md. Mahim Khan",
+  "title": "Naval Architect & Offshore Engineering Specialist",
+  "headline": "Designing the vessels of tomorrow.",
+  "subheadline": "SHIP DESIGN \u00b7 ENGINEERING ANALYSIS \u00b7 MARITIME INNOVATION",
+  "website": "https://www.itsmahim.dev/",
+  "bio": "I'm Md. Mahim Khan, a dedicated 4th-year student pursuing a B.Sc. in Naval Architecture & Offshore Engineering at Bangladesh Maritime University. With 3+ years of academic experience, I've developed a strong foundation in ship design and engineering analysis. I specialize in creating detailed ship designs, performing complex structural and hydrodynamic analyses, and utilizing programming for engineering automation.",
+  "quote": "Becoming a skilled naval architect contributing to cutting-edge ship design and offshore engineering worldwide.",
+  "education": {
+    "degree": "B.Sc. in Naval Architecture & Offshore Engineering",
+    "institution": "Bangladesh Maritime University (BMU)",
+    "location": "Dhaka, Bangladesh",
+    "currentLevel": "4th Year, 2nd Semester",
+    "duration": "3.5+ Years of Engineering Study",
+    "focusAreas": [
+      "Ship Design Optimization",
+      "Structural Analysis (FEA)",
+      "Computational Fluid Dynamics (CFD) & Hydrodynamics",
+      "Stability Calculations & RINA Classification",
+      "Engineering Process Automation"
+    ]
+  },
+  "competencies": [
+    {
+      "id": "01",
+      "title": "Ship Design & Modeling",
+      "description": "Proficient in creating detailed ship designs, from 2D technical drawings to 3D modeling and visualization.",
+      "software": [
+        "AutoCAD",
+        "Rhinoceros",
+        "MAXSURF",
+        "SolidWorks",
+        "ANSYS"
+      ],
+      "skills": [
+        "Design Optimization",
+        "Technical Drawings",
+        "Computer Vision",
+        "Lines Plan & General Arrangement"
+      ]
+    },
+    {
+      "id": "02",
+      "title": "Engineering Analysis",
+      "description": "Strong foundation in structural analysis, hydrodynamics, and stability calculations to create comprehensive engineering solutions.",
+      "software": [
+        "ANSYS",
+        "FEA",
+        "MAXSURF"
+      ],
+      "skills": [
+        "Structural Analysis",
+        "Stability Calculations",
+        "Hydrodynamic Analysis",
+        "Performance Optimization"
+      ]
+    },
+    {
+      "id": "03",
+      "title": "Programming & Automation",
+      "description": "Skilled in using programming languages for engineering calculations and automating processes.",
+      "software": [
+        "C++",
+        "Python",
+        "MATLAB",
+        "Node.js"
+      ],
+      "skills": [
+        "C++ Programming",
+        "Python Development",
+        "MATLAB Analysis",
+        "Process Automation"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "tanker-2000dwt",
+      "title": "2000 DWT Inland Oil Tanker",
+      "category": "Detailed Design",
+      "badge": "RINA Classification",
+      "description": "Complete vessel design for inland oil transportation with RINA classification. Engineered as a low-draft classed inland oil tanker optimized for shallow-water navigation and cargo safety.",
+      "specs": {
+        "LOA": "74.27 m",
+        "LWL": "73.5 m",
+        "Beam": "12 m",
+        "Draft": "3.5 m",
+        "Depth": "5 m",
+        "Speed": "12 knots",
+        "DWT": "2000 tonnes"
+      },
+      "highlights": [
+        "Low-draft classed inland oil tanker compliant with RINA rules",
+        "Full General Arrangement (GA), Lines Plan, and Midship Section development",
+        "Intact & damage stability verification across ballast and full-load conditions",
+        "3D NURBS hull surface modeling and hydrostatic table generation"
+      ],
+      "tools": [
+        "AutoCAD",
+        "MAXSURF",
+        "Rhinoceros"
+      ],
+      "modelPreset": "tanker"
+    },
+    {
+      "id": "hull-fea",
+      "title": "Hull Structural Analysis",
+      "category": "Finite Element Analysis",
+      "badge": "Structural Integrity",
+      "description": "Performing finite element analysis (FEA) on ship hull structures to validate design integrity under various hydrostatic, wave bending, and cargo loading conditions.",
+      "specs": {
+        "Method": "3D Finite Element Method",
+        "Solver": "ANSYS Mechanical",
+        "Load Cases": "Hogging, Sagging & Hydrostatic",
+        "Criterion": "Von Mises Yield & Buckling"
+      },
+      "highlights": [
+        "Finite element modeling of hull structure including longitudinal stiffeners and web frames",
+        "Validation of structural integrity under extreme wave bending moments",
+        "Stress and strain analysis under multiple load cases",
+        "Safety factor optimization and proper material selection for different depths"
+      ],
+      "tools": [
+        "ANSYS",
+        "FEA",
+        "Structural Mechanics"
+      ],
+      "modelPreset": "fea"
+    },
+    {
+      "id": "hull-optimization",
+      "title": "Hull Form Optimization",
+      "category": "Hydrodynamic Performance",
+      "badge": "15%+ Resistance Reduction",
+      "description": "Used MAXSURF for hull form development and optimization, achieving significant reduction in wave-making and frictional resistance and improved hydrodynamic performance.",
+      "specs": {
+        "Achievement": "15%+ Resistance Reduction",
+        "Primary Tool": "MAXSURF Modeler & Resistance",
+        "Validation": "CFD & Savitsky / Holtrop-Mennen",
+        "Target": "Bulbous Bow & Stern Flow"
+      },
+      "highlights": [
+        "Hull form generation and parametric modification in MAXSURF",
+        "Parametric design optimization for LCB and prismatic coefficient (Cp)",
+        "Resistance and propulsion analysis across operational Froude numbers",
+        "Performance prediction and CFD streamline validation"
+      ],
+      "tools": [
+        "MAXSURF",
+        "Hydrodynamics",
+        "ANSYS"
+      ],
+      "modelPreset": "auv"
+    }
+  ],
+  "webApps": [
+    {
+      "title": "File Converter Tools",
+      "url": "https://tools.itsmahim.qzz.io",
+      "domain": "tools.itsmahim.qzz.io",
+      "description": "Convert PDF files to images and images to PDF. Edit PDFs and convert between various file extensions.",
+      "tags": [
+        "PDF to Image",
+        "Image to PDF",
+        "File Conversion",
+        "PDF Editor"
+      ],
+      "category": "Utility"
+    },
+    {
+      "title": "AI Chat Application",
+      "url": "https://ai.itsmahim.qzz.io",
+      "domain": "ai.itsmahim.qzz.io",
+      "description": "Free AI chat application where anyone can use advanced AI capabilities without any cost.",
+      "tags": [
+        "Free AI Access",
+        "Real-time Chat",
+        "No Registration",
+        "Instant Responses"
+      ],
+      "category": "AI"
+    },
+    {
+      "title": "Money Manager",
+      "url": "https://moneymanager.qzz.io",
+      "domain": "moneymanager.qzz.io",
+      "description": "Monitor your earnings and expenses in real-time with comprehensive financial reporting.",
+      "tags": [
+        "Expense Tracking",
+        "Income Management",
+        "Financial Reports",
+        "Account Sync"
+      ],
+      "category": "Finance"
+    },
+    {
+      "title": "The Daily Wanted",
+      "url": "https://thedailywanted.qzz.io",
+      "domain": "thedailywanted.qzz.io",
+      "description": "Information search and monitoring tool built for fast results and comprehensive data discovery.",
+      "tags": [
+        "Website Search",
+        "Detailed Info",
+        "Fast Results",
+        "Comprehensive Data"
+      ],
+      "category": "Search"
+    },
+    {
+      "title": "AutoMail",
+      "url": "https://automail.itsmahim.qzz.io",
+      "domain": "automail.itsmahim.qzz.io",
+      "description": "Send bulk emails using your own mail credentials. Perfect for newsletters and mass communications.",
+      "tags": [
+        "Bulk Email",
+        "Custom Credentials",
+        "Easy Setup",
+        "Reliable Delivery"
+      ],
+      "category": "Automation"
+    }
+  ],
+  "publications": [
+    {
+      "id": "ga-plan",
+      "title": "General Arrangement Plan",
+      "date": "October 2024",
+      "readTime": "15 Min Read",
+      "platform": "LinkedIn Article",
+      "url": "https://www.itsmahim.dev/",
+      "tags": [
+        "SHIP DESIGN",
+        "GAP",
+        "NAVAL ARCHITECTURE"
+      ],
+      "description": "A comprehensive guide to understanding ship layout design, crew accommodation planning, and the essential components of a vessel's general arrangement. Explore different ship types and their unique layouts.",
+      "summary": "Covers machinery space allocation, cargo hold subdivision, wheelhouse visibility regulations, crew accommodation ergonomics, life-saving appliance (SOLAS) placement, and iterative spiral design workflows from concept sketch to classification approval."
+    },
+    {
+      "id": "auv-cfd",
+      "title": "Optimizing AUV Performance: A Deep Dive into Hydrodynamic Resistance with CFD",
+      "date": "October 2024",
+      "readTime": "8 Min Read",
+      "platform": "LinkedIn Article",
+      "url": "https://www.itsmahim.dev/",
+      "tags": [
+        "AUV",
+        "CFD",
+        "HYDRODYNAMICS"
+      ],
+      "description": "An in-depth exploration of AUV hydrodynamic performance optimization, including resistance analysis, computational fluid dynamics applications, and performance enhancement techniques.",
+      "summary": "Examines boundary layer separation, k-omega SST turbulence modeling, nose-cone Myring profile parameterization, mesh independence studies, and drag coefficient reduction for autonomous underwater vehicles."
+    }
+  ],
+  "certifications": [
+    {
+      "title": "Online Engineering & Technical Course",
+      "issuer": "Online \u2014 Muhammad Moin",
+      "issued": "06/12/2025",
+      "credentialId": "3803c23d-db46-43a5-af43-b5950f280121"
+    },
+    {
+      "title": "Online CAD & Product Design Course",
+      "issuer": "Online \u2014 Gabriel Corbett",
+      "issued": "28/06/2025",
+      "credentialId": "2df3faf0beed0f1c142cace3f25a682fffb69b391e21aee14ff3da5e94a7f24a"
+    },
+    {
+      "title": "Project Manager Certification",
+      "issuer": "Agile Enterprise Coach \u2014 Vipesh Singla, MBA",
+      "issued": "15/03/2025",
+      "credentialId": "1002903"
+    }
+  ],
+  "contact": {
+    "heading": "Let's build something that floats.",
+    "status": "Open to internships, collaborations, and conversations about ship design, hydrodynamics, and maritime innovation.",
+    "website": "https://www.itsmahim.dev/",
+    "university": "Bangladesh Maritime University (BMU), Dhaka, Bangladesh"
+  }
+}
