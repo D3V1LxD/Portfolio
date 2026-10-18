@@ -51,6 +51,18 @@ node server.js
 
 Open **`http://localhost:3000`** in your browser.
 
+### GitHub Pages Deployment
+
+Every push to `main` deploys the static portfolio in `public/` through the
+included GitHub Actions workflow. After enabling GitHub Pages for the
+repository with **Settings → Pages → Source: GitHub Actions**, the site is
+available at:
+
+`https://d3v1lxd.github.io/Portfolio/`
+
+The interactive portfolio renders on GitHub Pages. The Node.js REST API
+endpoints require running the included server locally or on a Node.js host.
+
 ### REST API Endpoints
 - `GET /api/profile` — Returns the structured JSON profile, education, competencies, vessel projects, 5 web apps, publications, and certifications.
 - `GET /api/hydrodynamics?loa=74.27&lwl=73.5&beam=12&draft=3.5&speed=12&seaState=1.2` — Computes live ITTC-1957 hull resistance, Froude number (`Fn`), displacement (`Δ`), wetted surface area (`S`), effective power (`Pe`), and transverse metacentric height (`GMt`).
