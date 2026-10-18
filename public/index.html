@@ -161,12 +161,8 @@
         <button type="button" data-nav="contact-section" class="nav-scroll-btn px-3 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-cyan-300 hover:bg-white/5 transition">Contact</button>
       </nav>
 
-      <!-- Actions: Node.js API Inspector & Mobile Menu Button -->
+      <!-- Actions: Mobile Menu Button -->
       <div class="flex items-center gap-2">
-        <button type="button" id="open-node-modal-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono-tech font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-400/30 hover:bg-emerald-500/25 transition">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>Node.js API</span>
-        </button>
         <button type="button" id="mobile-menu-btn" aria-label="Toggle Menu" class="lg:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 border border-white/10">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
@@ -1511,19 +1507,28 @@
         }
       }
 
-      document.getElementById('open-node-modal-btn').addEventListener('click', () => {
-        renderApiPreview('hydro');
-        nodeModal.classList.remove('hidden');
-        nodeModal.classList.add('flex');
-      });
-      document.getElementById('close-node-modal-btn').addEventListener('click', () => {
-        nodeModal.classList.add('hidden');
-        nodeModal.classList.remove('flex');
-      });
-      document.getElementById('close-node-modal-bottom-btn').addEventListener('click', () => {
-        nodeModal.classList.add('hidden');
-        nodeModal.classList.remove('flex');
-      });
+      const openNodeModalButton = document.getElementById('open-node-modal-btn');
+      if (openNodeModalButton && nodeModal) {
+        openNodeModalButton.addEventListener('click', () => {
+          renderApiPreview('hydro');
+          nodeModal.classList.remove('hidden');
+          nodeModal.classList.add('flex');
+        });
+      }
+      const closeNodeModalButton = document.getElementById('close-node-modal-btn');
+      if (closeNodeModalButton && nodeModal) {
+        closeNodeModalButton.addEventListener('click', () => {
+          nodeModal.classList.add('hidden');
+          nodeModal.classList.remove('flex');
+        });
+      }
+      const closeNodeModalBottomButton = document.getElementById('close-node-modal-bottom-btn');
+      if (closeNodeModalBottomButton && nodeModal) {
+        closeNodeModalBottomButton.addEventListener('click', () => {
+          nodeModal.classList.add('hidden');
+          nodeModal.classList.remove('flex');
+        });
+      }
       document.querySelectorAll('.api-test-btn').forEach(btn => {
         btn.addEventListener('click', () => renderApiPreview(btn.getAttribute('data-api-test')));
       });

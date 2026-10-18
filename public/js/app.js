@@ -357,19 +357,28 @@
         }
       }
 
-      document.getElementById('open-node-modal-btn').addEventListener('click', () => {
-        renderApiPreview('hydro');
-        nodeModal.classList.remove('hidden');
-        nodeModal.classList.add('flex');
-      });
-      document.getElementById('close-node-modal-btn').addEventListener('click', () => {
-        nodeModal.classList.add('hidden');
-        nodeModal.classList.remove('flex');
-      });
-      document.getElementById('close-node-modal-bottom-btn').addEventListener('click', () => {
-        nodeModal.classList.add('hidden');
-        nodeModal.classList.remove('flex');
-      });
+      const openNodeModalButton = document.getElementById('open-node-modal-btn');
+      if (openNodeModalButton && nodeModal) {
+        openNodeModalButton.addEventListener('click', () => {
+          renderApiPreview('hydro');
+          nodeModal.classList.remove('hidden');
+          nodeModal.classList.add('flex');
+        });
+      }
+      const closeNodeModalButton = document.getElementById('close-node-modal-btn');
+      if (closeNodeModalButton && nodeModal) {
+        closeNodeModalButton.addEventListener('click', () => {
+          nodeModal.classList.add('hidden');
+          nodeModal.classList.remove('flex');
+        });
+      }
+      const closeNodeModalBottomButton = document.getElementById('close-node-modal-bottom-btn');
+      if (closeNodeModalBottomButton && nodeModal) {
+        closeNodeModalBottomButton.addEventListener('click', () => {
+          nodeModal.classList.add('hidden');
+          nodeModal.classList.remove('flex');
+        });
+      }
       document.querySelectorAll('.api-test-btn').forEach(btn => {
         btn.addEventListener('click', () => renderApiPreview(btn.getAttribute('data-api-test')));
       });
