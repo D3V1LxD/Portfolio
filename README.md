@@ -2,6 +2,9 @@
 
 A **Three.js (WebGL) Interactive 3D Hydrodynamic Digital Twin** portfolio built for **Md. Mahim Khan**, 4th-Year B.Sc. Student in Naval Architecture & Offshore Engineering at **Bangladesh Maritime University (BMU)**.
 
+The website is served by a zero-dependency Node.js application and includes
+the interactive static frontend plus hydrodynamics and contact API routes.
+
 ## 1. Profile Assessment & Academic Theme ("Abyssal Hydrodynamic & Digital Twin CAD")
 
 - **Academic Discipline**: B.Sc. in Naval Architecture & Offshore Engineering (4th Year, 2nd Semester · 3.5+ Years of Engineering Study) at Bangladesh Maritime University.
@@ -17,6 +20,9 @@ A **Three.js (WebGL) Interactive 3D Hydrodynamic Digital Twin** portfolio built 
 
 ```text
 itsmahim-naval-portfolio/
+├── package.json                 # Node.js metadata and scripts
+├── server.js                    # Node.js HTTP server and REST API
+├── test-server.js               # Automated server verification tests
 ├── .github/workflows/           # GitHub Pages deployment workflow
 ├── README.md                    # Documentation and deployment guide
 └── public/
@@ -30,13 +36,34 @@ itsmahim-naval-portfolio/
         └── hull-cfd.jpg
 ```
 
-## 3. GitHub Pages Deployment
+## 3. Running with Node.js
 
-Every push to `main` deploys the static portfolio in `public/` through the
-included GitHub Actions workflow. After enabling GitHub Pages for the
-repository with **Settings → Pages → Source: GitHub Actions**, the site is
-available at:
+### Prerequisites
+- **Node.js** `>= 16.0.0`
+
+```bash
+npm start
+```
+
+Open **http://localhost:3000** in your browser.
+
+Run the server checks with:
+
+```bash
+npm test
+```
+
+The API includes `GET /api/profile`, `GET /api/hydrodynamics`, and
+`POST /api/contact`.
+
+## 4. GitHub Pages Deployment
+
+Every push to `main` also deploys the static frontend in `public/` through the
+included GitHub Actions workflow. After enabling GitHub Pages with
+**Settings → Pages → Source: GitHub Actions**, the site is available at:
 
 `https://d3v1lxd.github.io/Portfolio/`
 
-The site is a static frontend and does not require a build step.
+GitHub Pages cannot run the Node.js API. To use the API online, deploy the
+Node.js project to a Node-compatible host such as Render, Railway, or
+Fly.io, then point the frontend API requests at that service.
